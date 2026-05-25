@@ -1,0 +1,489 @@
+%% holodeck_serial_IEEE_Paper.tex
+%% Holodeck on Serial Compute: A Benchmark Framework and Research Agenda
+%% Author: Aldrich K. Wooden, Sr.
+%% Zuup Innovation Lab / Southern New Hampshire University
+%% IEEE 5-page conference format
+
+\documentclass[conference]{IEEEtran}
+
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{multirow}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue
+}
+
+\begin{document}
+
+\title{Toward a Holodeck on Serial Compute:\\
+A Benchmark Framework and Open Research Agenda}
+
+\author{
+    \IEEEauthorblockN{Aldrich K. Wooden, Sr.}
+    \IEEEauthorblockA{
+        \textit{Zuup Innovation Lab}\\
+        \textit{Southern New Hampshire University}\\
+        Manchester, NH, USA\\
+        aldrich.wooden@snhu.edu
+    }
+}
+
+\maketitle
+
+%% ============================================================
+\begin{abstract}
+We propose a benchmark framework for evaluating synthetic environment simulation
+engines---systems we term \textit{holodeck-class}---grounded explicitly in serial
+compute foundations. Departing from the prevailing assumption that immersive simulation
+requires massively parallel hardware, we assert that a deterministic, stateful,
+interactive simulation engine satisfying a formally defined minimum viable world
+(MVW) specification is achievable on single-core serial computation. We present seven
+benchmark domains spanning world state integrity, temporal coherence, physical
+simulation fidelity, interaction responsiveness, environmental generation, serial
+compute efficiency, and determinism. We conduct an adversarial integrity analysis of
+the framework itself, identify four critical open research questions, and provide a
+partial analytical grounding for the serial sufficiency claim via the MVW definition.
+This work is a position paper: the benchmark set is the contribution, and documented
+gaps constitute the research agenda.
+\end{abstract}
+
+\begin{IEEEkeywords}
+simulation, serial computing, benchmark framework, deterministic systems, virtual
+environments, holodeck, real-time physics, minimum viable world
+\end{IEEEkeywords}
+
+%% ============================================================
+\section{Introduction}
+
+The concept of a fully immersive, interactive synthetic environment---colloquially
+termed a \textit{holodeck} after its science fiction archetype \cite{okuda1994}---has
+historically been framed as a problem of display fidelity, sensor fusion, and
+massive parallel compute \cite{lanier2017, abrash2012}. Research in virtual reality
+\cite{sutherland1968}, physically-based rendering \cite{pharr2023}, and real-time
+physics \cite{ericson2004, catto2009} has largely presumed GPU-scale parallelism as
+a baseline architectural primitive.
+
+We challenge this assumption at the architectural level. Our central claim is:
+
+\begin{quote}
+\textit{A holodeck-class simulation engine, defined as a deterministic, stateful,
+interactive environment generator, can be constructed on a single serial compute
+foundation without GPU or distributed compute as architectural primitives.}
+\end{quote}
+
+This claim is not merely academic. It has implications for embedded systems
+\cite{barr1999}, edge computing deployments \cite{shi2016edge}, resource-constrained
+research environments, and the formal study of computational minimality in simulation
+systems \cite{wolfram2002}.
+
+The contribution of this paper is not a working implementation---it is a
+\textit{benchmark framework}: a set of measurable criteria by which any candidate
+holodeck system can be evaluated, combined with an honest gap analysis of the
+framework's own limitations. This positions the work as a necessary precursor to
+empirical validation.
+
+The remainder of the paper is structured as follows. Section II establishes
+definitional foundations. Section III presents the benchmark framework across seven
+domains. Section IV defines the Minimum Viable World (MVW) and provides a
+partial analytical grounding for the serial sufficiency claim. Section V conducts
+an adversarial integrity analysis. Section VI documents open research questions.
+Section VII concludes.
+
+%% ============================================================
+\section{Foundational Definitions}
+
+\subsection{Serial Computer}
+
+We adopt Interpretation 1 from our problem formulation: a serial computer is a
+single physical machine operating under the Von Neumann architecture
+\cite{vonneumann1945}, executing one instruction per clock cycle per core. Parallelism
+is permitted as an abstraction layer above the serial foundation but is not an
+architectural primitive. This definition includes modern single-core processors
+operating without SIMD or GPU offload at the simulation kernel level.
+
+\subsection{Holodeck Classification}
+
+We define three fidelity tiers:
+
+\begin{itemize}
+    \item \textbf{Tier A}: Full sensory immersion (visual, audio, haptic,
+          proprioceptive). Display-complete.
+    \item \textbf{Tier B}: Visual + audio + spatial interaction. VR-complete.
+    \item \textbf{Tier C}: Computational simulation engine. The world exists as
+          data; rendering is a separable concern.
+\end{itemize}
+
+This paper addresses \textbf{Tier C} exclusively. The simulation engine is the
+system under test. Display and rendering are out of scope.
+
+\subsection{Tier C Formal Definition}
+
+A Tier C holodeck system $\mathcal{H}$ is a 5-tuple:
+
+\begin{equation}
+    \mathcal{H} = (\mathcal{S}, \Delta, \mathcal{I}, \mathcal{G}, \Phi)
+\end{equation}
+
+where $\mathcal{S}$ is the world state space, $\Delta: \mathcal{S} \times t
+\rightarrow \mathcal{S}$ is the state transition function (physics engine),
+$\mathcal{I}$ is the input event set, $\mathcal{G}$ is the environment generation
+function (spec $\rightarrow \mathcal{S}_0$), and $\Phi$ is the observer interface.
+
+The system is \textit{serial-sufficient} if and only if all five components can
+be evaluated on a single-core CPU at $\geq 1$ GHz while satisfying all benchmark
+thresholds defined in Section III.
+
+%% ============================================================
+\section{Benchmark Framework}
+
+We define seven benchmark domains. Each domain contains 3--4 specific benchmarks
+with measurable thresholds. All thresholds include an epistemic confidence marker:
+\textbf{VERIFIED} (derivable from first principles or established literature),
+\textbf{PLAUSIBLE} (logically sound, requires empirical calibration), or
+\textbf{SPECULATIVE} (theoretical, requires experimental validation).
+
+\subsection{Domain 1: World State Integrity (WSI)}
+
+World state integrity benchmarks assess whether the system maintains a persistent,
+consistent, queryable world representation across simulation time.
+
+\begin{table}[ht]
+\caption{World State Integrity Benchmarks}
+\label{tab:wsi}
+\centering
+\small
+\begin{tabular}{p{0.7cm}p{3.2cm}p{1.8cm}p{1.0cm}}
+\toprule
+\textbf{ID} & \textbf{Metric} & \textbf{Threshold} & \textbf{Conf.} \\
+\midrule
+WSI-01 & State retention across ticks & 100\% / 10K ticks & PLAUS. \\
+WSI-02 & Zero contradictory assertions & 0 / 1M queries & VERIF. \\
+WSI-03 & State query latency & $\leq$1ms / 10K entities & SPEC. \\
+WSI-04 & Round-trip serialization fidelity & Bit-identical / 1K runs & VERIF. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+WSI-02 and WSI-04 are formally derivable: consistency is a logical property, and
+deterministic serialization is a requirement of the serial compute model. WSI-01
+and WSI-03 thresholds are empirically uncalibrated (see Section V).
+
+\subsection{Domain 2: Temporal Coherence (TC)}
+
+\begin{table}[ht]
+\caption{Temporal Coherence Benchmarks}
+\label{tab:tc}
+\centering
+\small
+\begin{tabular}{p{0.7cm}p{3.2cm}p{1.8cm}p{1.0cm}}
+\toprule
+\textbf{ID} & \textbf{Metric} & \textbf{Threshold} & \textbf{Conf.} \\
+\midrule
+TC-01 & Tick determinism & Hash-equal / 100 runs & VERIF. \\
+TC-02 & Causal ordering & 0 violations / 10K events & VERIF. \\
+TC-03 & Simulation rate & $\geq$60 ticks/sec (MVW) & SPEC. \\
+TC-04 & Time dilation stability & Pass at 0.1$\times$, 1$\times$, 10$\times$ & PLAUS. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+TC-01 and TC-02 are foundational properties of deterministic serial execution
+\cite{lamport1978}. TC-03 references the Minimum Viable World (MVW) defined
+in Section IV, which provides partial analytical grounding for the 60 ticks/sec
+threshold.
+
+\subsection{Domain 3: Physical Simulation Fidelity (PSF)}
+
+Physics benchmarks verify that the simulation engine implements a self-consistent,
+closed physics model. We adopt Newtonian mechanics as the reference model
+\cite{goldstein2002}.
+
+\begin{table}[ht]
+\caption{Physical Simulation Fidelity Benchmarks}
+\label{tab:psf}
+\centering
+\small
+\begin{tabular}{p{0.7cm}p{3.2cm}p{1.8cm}p{1.0cm}}
+\toprule
+\textbf{ID} & \textbf{Metric} & \textbf{Threshold} & \textbf{Conf.} \\
+\midrule
+PSF-01 & Projectile trajectory accuracy & $\leq$0.1\% / 1K samples & VERIF. \\
+PSF-02 & Elastic collision momentum & Error $\leq 10^{-6}$ & VERIF. \\
+PSF-03 & Constraint satisfaction & 0 violations / 10K frames & PLAUS. \\
+PSF-04 & Interaction matrix coverage & 100\% of defined pairs & PLAUS. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+PSF-04 replaces the original undecidable formulation (``no undefined behavior'')
+with a closed interaction matrix requirement. The matrix is defined at system
+initialization and coverage is measurable.
+
+\subsection{Domain 4: Interaction Fidelity (IF)}
+
+\begin{table}[ht]
+\caption{Interaction Fidelity Benchmarks}
+\label{tab:if}
+\centering
+\small
+\begin{tabular}{p{0.7cm}p{3.2cm}p{1.8cm}p{1.0cm}}
+\toprule
+\textbf{ID} & \textbf{Metric} & \textbf{Threshold} & \textbf{Conf.} \\
+\midrule
+IF-01 & Input-to-state latency & $\leq$16.6ms (60Hz) & PLAUS. \\
+IF-02 & Input sequence determinism & Hash-equal / 50 runs & VERIF. \\
+IF-03 & Input event coverage & 100\% of defined events & PLAUS. \\
+IF-04 & Interaction rule compliance & 0 violations / 10K events & PLAUS. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Domain 5: Environmental Generation (EG)}
+
+Environmental generation benchmarks assess whether the system can instantiate
+arbitrary worlds from a declarative specification, a requirement for the
+``arbitrary environment'' property of the Tier C definition \cite{resnick1997}.
+
+\begin{table}[ht]
+\caption{Environmental Generation Benchmarks}
+\label{tab:eg}
+\centering
+\small
+\begin{tabular}{p{0.7cm}p{3.2cm}p{1.8cm}p{1.0cm}}
+\toprule
+\textbf{ID} & \textbf{Metric} & \textbf{Threshold} & \textbf{Conf.} \\
+\midrule
+EG-01 & Spec-to-world completeness & 100\% / 100 specs & PLAUS. \\
+EG-02 & Generation determinism & Hash-equal (seed+spec) & VERIF. \\
+EG-03 & Generation speed & $\leq$5s (MVW) & SPEC. \\
+EG-04 & Spec language coverage & All benchmark envs. & PLAUS. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Domain 6: Serial Compute Efficiency (SCE)}
+
+This is the load-bearing domain for the paper's central claim. SCE-04 asserts that
+a single-core CPU at $\geq 1$ GHz is sufficient for MVW simulation at the defined
+tick rate. Section IV provides analytical grounding.
+
+\begin{table}[ht]
+\caption{Serial Compute Efficiency Benchmarks}
+\label{tab:sce}
+\centering
+\small
+\begin{tabular}{p{0.7cm}p{3.2cm}p{1.8cm}p{1.0cm}}
+\toprule
+\textbf{ID} & \textbf{Metric} & \textbf{Threshold} & \textbf{Conf.} \\
+\midrule
+SCE-01 & CPU cycles per tick (MVW) & Profiler measurement & SPEC. \\
+SCE-02 & RAM per 1K entities & Profiler measurement & SPEC. \\
+SCE-03 & Tick cost scaling law & $O(N \log N)$ or better & PLAUS. \\
+SCE-04 & Serial sufficiency & All benchmarks pass, single-core, $\geq$1 GHz & SPEC. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Domain 7: Determinism \& Reproducibility (DR)}
+
+\begin{table}[ht]
+\caption{Determinism \& Reproducibility Benchmarks}
+\label{tab:dr}
+\centering
+\small
+\begin{tabular}{p{0.7cm}p{3.2cm}p{1.8cm}p{1.0cm}}
+\toprule
+\textbf{ID} & \textbf{Metric} & \textbf{Threshold} & \textbf{Conf.} \\
+\midrule
+DR-01 & Cross-platform reproducibility & Hash-equal (same impl.) & PLAUS. \\
+DR-02 & Floating point stability & $\leq 10^{-9}$ divergence/tick & PLAUS. \\
+DR-03 & Seed-based replayability & Full replay from seed+log & VERIF. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Domain 8: Observer Interface Completeness (OI)}
+
+An eighth domain, absent in the initial framework and added following adversarial
+review, addresses the observer interface: the mechanism by which an external
+system queries world state. Without this domain, the benchmark set measures a
+simulation with no exit---a formally closed system that cannot be verified from
+outside.
+
+\begin{table}[ht]
+\caption{Observer Interface Completeness Benchmarks}
+\label{tab:oi}
+\centering
+\small
+\begin{tabular}{p{0.7cm}p{3.2cm}p{1.8cm}p{1.0cm}}
+\toprule
+\textbf{ID} & \textbf{Metric} & \textbf{Threshold} & \textbf{Conf.} \\
+\midrule
+OI-01 & State query API coverage & 100\% of world state & PLAUS. \\
+OI-02 & Query result determinism & Hash-equal / same state & VERIF. \\
+OI-03 & Scene graph export fidelity & Lossless / 10 formats & SPEC. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%% ============================================================
+\section{Minimum Viable World (MVW)}
+
+\subsection{Definition}
+
+The MVW is the smallest instantiation of a holodeck system satisfying the Tier C
+definition. It is parameterized as a 6-tuple:
+
+\begin{equation}
+    \text{MVW} = (N, M, P, K, T, \Phi)
+\end{equation}
+
+with minimum values: $N=100$ entities, $M=8$ attributes per entity
+$\{x,y,z,v_x,v_y,v_z,m,\tau\}$, $P=4$ physics rules (Newton's three laws plus
+elastic collision), $K=3$ spatial dimensions, $T=4$ interaction types
+$\{\text{move, create, destroy, query}\}$, and $\Phi=1$ observer API endpoint.
+
+\subsection{Analytical Grounding for SCE-04}
+
+The per-tick serial compute cost for MVW(100, 8, 4, 3, 4, 1) is bounded analytically.
+State update requires $N \times M = 800$ operations per tick. Physics evaluation
+requires $N \times P = 400$ operations per tick. Collision detection under a
+naive all-pairs approach requires $\binom{N}{2} = 4{,}950$ comparisons per tick;
+under a bounding volume hierarchy (BVH) \cite{ericson2004}, this reduces to
+$O(N \log N) \approx 700$ operations at $N=100$.
+
+The total per-tick cost is bounded:
+\begin{equation}
+    C_{\text{tick}} \leq 800 + 400 + 4{,}950 = 6{,}150 \text{ ops (naive)}
+\end{equation}
+\begin{equation}
+    C_{\text{tick}} \leq 800 + 400 + 700 = 1{,}900 \text{ ops (BVH)}
+\end{equation}
+
+At $f_{\text{CPU}} = 1 \text{ GHz}$ (i.e., $10^9$ ops/sec), the achievable tick
+rate far exceeds the 60 ticks/sec threshold:
+
+\begin{equation}
+    R_{\text{tick}} = \frac{10^9}{6{,}150} \approx 162{,}000 \text{ ticks/sec} \gg 60
+\end{equation}
+
+This provides analytical (though not empirical) grounding for SCE-04.
+
+\subsection{Scaling Boundary}
+
+Under the naive $O(N^2)$ collision model, serial sufficiency degrades when:
+\begin{equation}
+    \frac{10^9}{N^2/2} < 60 \implies N > \sqrt{\frac{10^9}{30}} \approx 5{,}774
+\end{equation}
+
+Under BVH ($O(N \log N)$), the boundary extends to approximately $N \approx 10^8$,
+well beyond any practical MVW instantiation. The architectural choice of BVH
+vs. naive collision detection is therefore load-bearing for the serial sufficiency
+claim at larger $N$.
+
+%% ============================================================
+\section{Adversarial Integrity Analysis}
+
+We apply adversarial review to the benchmark framework itself, identifying five
+classes of integrity failure.
+
+\textbf{Attack 1 --- Circular Dependency (resolved):} Six benchmarks (TC-03,
+SCE-01--04) referenced ``minimum viable world complexity'' without definition.
+MVW (Section IV) resolves this dependency. Residual gap: $N=100$ threshold
+is analytically motivated but not empirically calibrated (see Open Question Q1).
+
+\textbf{Attack 2 --- Undecidable Benchmark (resolved):} PSF-04 originally required
+``no undefined behavior'' across all interactions---a formally undecidable property
+for open environments \cite{turing1936}. Replaced with closed interaction matrix
+coverage requirement.
+
+\textbf{Attack 3 --- Threshold Arbitrariness (partially resolved):} Thresholds
+marked SPECULATIVE (WSI-03, TC-03, SCE-01, SCE-02, EG-03) lack empirical
+calibration. SCE-04 receives analytical grounding via MVW (Section IV). Remaining
+thresholds are documented as open calibration tasks.
+
+\textbf{Attack 4 --- Floating Point Non-Determinism (unresolved):} DR-01
+cross-platform determinism is non-trivial. IEEE 754 floating point behavior
+varies across compiler optimizations and CPU architectures
+\cite{goldberg1991, monniaux2008}. This is documented as Open Question Q3:
+the architectural decision between fixed-point arithmetic and scoped IEEE 754
+compliance is deferred to the implementation phase.
+
+\textbf{Attack 5 --- Missing Observer Domain (resolved):} The original seven
+domains constituted a formally closed system with no external verification
+mechanism. Domain 8 (Observer Interface) resolves this.
+
+\textbf{Net integrity assessment:} 3 of 5 attacks fully resolved, 1 partially
+resolved (threshold calibration), 1 deferred (floating point strategy). The
+framework is structurally sound for a position paper contribution.
+
+%% ============================================================
+\section{Open Research Questions}
+
+Four questions remain unresolved and constitute the forward research agenda
+emerging from this framework.
+
+\textbf{Q1 --- Minimum emergence threshold:} What is the minimum entity count $N$
+at which a Newtonian simulation exhibits non-trivial emergent behavior? This
+determines whether $N=100$ is conservative, sufficient, or excessive for the MVW
+claim. Related work in agent-based modeling \cite{axelrod1997, epstein1996} is
+directionally relevant but not directly applicable to Newtonian simulation engines.
+
+\textbf{Q2 --- BVH serial classification:} Does a bounding volume hierarchy count
+as a ``serial'' data structure under Interpretation 1? BVH traversal is inherently
+sequential, but its construction can be parallelized. If BVH construction is
+classified as a serial operation, the scaling analysis in Section IV holds; if not,
+an alternative serial-compatible spatial index is required.
+
+\textbf{Q3 --- Fixed-point vs. IEEE 754:} Can elastic collision response (PSF-02)
+be implemented in fixed-point arithmetic without loss of physical fidelity at the
+$10^{-6}$ threshold? This is an empirical question requiring profiling on target
+hardware architectures \cite{sterbenz1974}.
+
+\textbf{Q4 --- Turing completeness of interaction vocabulary:} Is $T=4$
+$\{\text{move, create, destroy, query}\}$ a Turing-complete interaction vocabulary
+for world simulation? If so, the MVW interaction set is minimal; if not, a larger
+$T$ may be required for ``arbitrary environment'' generation as claimed in EG-01.
+
+%% ============================================================
+\section{Conclusion}
+
+We have presented a benchmark framework for holodeck-class simulation systems
+grounded in serial compute foundations. The framework comprises eight domains,
+27 individual benchmarks, and a formal Minimum Viable World definition that
+provides analytical grounding for the serial sufficiency claim (SCE-04). An
+adversarial integrity analysis resolved three of five identified failures;
+two remain as documented open questions.
+
+The central analytical result is that a 1 GHz single-core CPU achieves
+approximately $162{,}000$ ticks/sec for a 100-entity Newtonian simulation---a
+margin exceeding the 60 ticks/sec threshold by a factor of approximately $2{,}700$.
+This result is analytical, not empirical; empirical validation constitutes the
+primary next research phase.
+
+Four open research questions frame the forward agenda: minimum emergence threshold
+($N$ calibration), BVH serial classification, fixed-point arithmetic fidelity, and
+Turing completeness of the minimal interaction vocabulary. Resolution of these
+questions will determine whether the serial sufficiency claim advances from
+analytical to empirically verified status.
+
+The benchmark set is available as an open repository to support community validation
+efforts.
+
+%% ============================================================
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

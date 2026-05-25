@@ -1,2 +1,136 @@
-# hsc
-A holodeck built on top of Serial Compute. 
+# holodeck-serial
+
+> **Toward a Holodeck on Serial Compute: A Benchmark Framework and Open Research Agenda**
+>
+> Zuup Innovation Lab | A. Khaalis Wooden, Sr.
+
+---
+
+## Repository Structure
+
+```
+holodeck-serial/
+│
+├── README.md                         ← This file
+├── CONTRIBUTING.md                   ← Contribution guidelines
+├── LICENSE                           ← MIT
+│
+├── paper/                            ← IEEE whitepaper artifacts
+│   ├── holodeck_serial_IEEE_Paper.tex
+│   ├── references.bib
+│   └── figures/                      ← Diagrams, tables (generated)
+│
+├── spec/                             ← Formal specifications
+│   ├── MVW_Definition_v0.1.md        ← Minimum Viable World definition
+│   ├── benchmark_set_v0.1.md         ← Complete benchmark set with integrity analysis
+│   └── holodeck_formal.md            ← Tier C formal definition
+│
+├── src/                              ← Reference implementation (Phase 4)
+│   ├── core/
+│   │   ├── world.py                  ← World state manager
+│   │   ├── physics.py                ← Newtonian physics engine
+│   │   ├── scheduler.py              ← Serial tick scheduler
+│   │   └── observer.py               ← Observer interface (OI domain)
+│   ├── benchmarks/
+│   │   ├── run_benchmarks.py         ← Benchmark runner
+│   │   ├── wsi/                      ← World State Integrity tests
+│   │   ├── tc/                       ← Temporal Coherence tests
+│   │   ├── psf/                      ← Physical Simulation Fidelity tests
+│   │   ├── if_/                      ← Interaction Fidelity tests
+│   │   ├── eg/                       ← Environmental Generation tests
+│   │   ├── sce/                      ← Serial Compute Efficiency tests
+│   │   ├── dr/                       ← Determinism & Reproducibility tests
+│   │   └── oi/                       ← Observer Interface tests
+│   └── mvw/
+│       ├── mvw_instance.py           ← MVW(100,8,4,3,4,1) reference instance
+│       └── mvw_profiler.py           ← SCE-01/02/03 profiling harness
+│
+├── hardware/                         ← Hardware scaffold (Phase 4)
+│   ├── target_spec.md                ← Target hardware specification
+│   ├── serial_baseline.md            ← 1 GHz serial CPU baseline definition
+│   └── profiling_plan.md             ← Empirical validation plan
+│
+├── results/                          ← Benchmark results (populated in Phase 4)
+│   └── .gitkeep
+│
+└── docs/
+    ├── open_questions.md             ← Q1-Q4 research agenda
+    └── gap_analysis.md               ← Integrity attack documentation
+```
+
+---
+
+## Project Phases
+
+| Phase | Status | Deliverable |
+|-------|--------|-------------|
+| 1 | ✅ Complete | Benchmark set v0.1 (8 domains, 27 benchmarks) |
+| 2 | ✅ Complete | Integrity/verticality attack — 5 attacks, 3 resolved |
+| 3 | ✅ Complete | IEEE 5-page whitepaper scaffold (LaTeX + BibTeX) |
+| 4 | 🔲 Next | Hardware scaffold + reference implementation |
+| 5 | 🔲 Pending | Claude Code execution plan |
+
+---
+
+## Minimum Viable World (MVW)
+
+The MVW is the atomic unit of holodeck complexity. It parameterizes the smallest
+world that satisfies the Tier C definition:
+
+```
+MVW = (N=100, M=8, P=4, K=3, T=4, Φ=1)
+```
+
+**Analytical result (SCE-04 grounding):**
+At 1 GHz serial CPU, MVW(100,8,4,3,4,1) achieves ~162,000 ticks/sec against a
+60 ticks/sec requirement — a 2,700× margin. This is analytical, not empirical.
+Empirical validation is Phase 4.
+
+---
+
+## Open Research Questions
+
+| ID | Question | Priority |
+|----|----------|----------|
+| Q1 | Minimum N for emergent behavior | High |
+| Q2 | BVH serial classification | Medium |
+| Q3 | Fixed-point vs. IEEE 754 fidelity | High |
+| Q4 | Turing completeness of T=4 vocabulary | Medium |
+
+---
+
+## Setup
+
+```bash
+git clone https://github.com/khaaliswooden-max/holodeck-serial
+cd holodeck-serial
+pip install -r requirements.txt  # Phase 4
+```
+
+**Paper compilation (requires LaTeX + IEEEtran):**
+```bash
+cd paper/
+pdflatex holodeck_serial_IEEE_Paper.tex
+bibtex holodeck_serial_IEEE_Paper
+pdflatex holodeck_serial_IEEE_Paper.tex
+pdflatex holodeck_serial_IEEE_Paper.tex
+```
+
+---
+
+## Citation
+
+```bibtex
+@misc{wooden2026holodeck,
+  author    = {Wooden, Aldrich K.},
+  title     = {Toward a Holodeck on Serial Compute: A Benchmark Framework
+               and Open Research Agenda},
+  year      = {2026},
+  institution = {Zuup Innovation Lab / Southern New Hampshire University},
+  note      = {Position paper. Repository: github.com/khaaliswooden-max/holodeck-serial}
+}
+```
+
+---
+
+*Zuup Innovation Lab — Learn, Scale, Disrupt*
