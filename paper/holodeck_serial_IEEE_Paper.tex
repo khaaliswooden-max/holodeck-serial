@@ -154,6 +154,17 @@ with measurable thresholds. All thresholds include an epistemic confidence marke
 \textbf{PLAUSIBLE} (logically sound, requires empirical calibration), or
 \textbf{SPECULATIVE} (theoretical, requires experimental validation).
 
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/fig1_dependency_graph.pdf}
+\caption{Benchmark domain dependency pipeline. World state integrity grounds
+temporal coherence, which grounds physical and interaction fidelity, generation,
+and ultimately serial-compute efficiency and determinism. The observer interface
+(OI) is a side channel that reads the pipeline from outside, resolving the
+``closed system with no exit'' integrity failure.}
+\label{fig:domains}
+\end{figure*}
+
 \subsection{Domain 1: World State Integrity (WSI)}
 
 World state integrity benchmarks assess whether the system maintains a persistent,
@@ -355,6 +366,16 @@ $\{x,y,z,v_x,v_y,v_z,m,\tau\}$, $P=4$ physics rules (Newton's three laws plus
 elastic collision), $K=3$ spatial dimensions, $T=4$ interaction types
 $\{\text{move, create, destroy, query}\}$, and $\Phi=1$ observer API endpoint.
 
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/fig3_mvw_diagram.pdf}
+\caption{The Minimum Viable World as a 6-tuple. Each parameter is the minimum
+value satisfying the Tier C definition; $M$, $P$, $K$, and $\Phi$ are VERIFIED
+from first principles, $T$ is PLAUSIBLE, and $N$ remains SPECULATIVE pending the
+emergence-threshold question (Q1).}
+\label{fig:mvw}
+\end{figure*}
+
 \subsection{Analytical Grounding for SCE-04}
 
 The per-tick serial compute cost for MVW(100, 8, 4, 3, 4, 1) is bounded analytically.
@@ -392,6 +413,19 @@ Under BVH ($O(N \log N)$), the boundary extends to approximately $N \approx 10^8
 well beyond any practical MVW instantiation. The architectural choice of BVH
 vs. naive collision detection is therefore load-bearing for the serial sufficiency
 claim at larger $N$.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig2_scaling_law.pdf}
+\caption{SCE scaling law. The analytical 1\,GHz model places naive $O(N^2)$ and
+BVH $O(N\log N)$ tick rates far above the 60 ticks/sec threshold at $N=100$; the
+naive curve crosses the threshold near $N\approx5{,}774$. The black marker is the
+empirical CPython reference measurement (\(\sim\)311 ticks/sec over a 60\,s
+single-core run), which clears the threshold by \(\sim5\times\) despite a large
+interpreter tax. A profiling sweep confirms the empirical fits: naive$=O(N^2)$,
+BVH$=O(N\log N)$.}
+\label{fig:scaling}
+\end{figure}
 
 %% ============================================================
 \section{Adversarial Integrity Analysis}
