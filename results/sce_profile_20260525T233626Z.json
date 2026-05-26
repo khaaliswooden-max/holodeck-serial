@@ -1,0 +1,132 @@
+{
+  "profiler": "holodeck-serial SCE",
+  "timestamp_utc": "2026-05-25T23:36:26.321663+00:00",
+  "platform": "Linux-6.18.5-x86_64-with-glibc2.39",
+  "processor": "x86_64",
+  "python_version": "3.11.15",
+  "cpu0_pinned": true,
+  "cpu_freq_hz": 2799998000.0,
+  "mvw": "MVW(100,8,4,3,4,1)",
+  "results": {
+    "SCE-01": {
+      "id": "SCE-01",
+      "name": "CPU cost per tick (MVW N=100)",
+      "mode": "naive",
+      "n_ticks": 10000,
+      "mean_ns": 3248550.14870044,
+      "std_ns": 679257.2329566844,
+      "min_ns": 2836627.999954544,
+      "max_ns": 12313280.99993334,
+      "ticks_per_sec": 307.8296329825917,
+      "cpu_freq_hz": 2799998000.0,
+      "est_cycles_per_tick": 9095933.919260934,
+      "confidence": "SPECULATIVE",
+      "notes": "est_cycles_per_tick is wall-time x measured CPU freq, not a hardware perf counter"
+    },
+    "SCE-02": {
+      "id": "SCE-02",
+      "name": "RAM per 1K entities",
+      "n_entities": 1000,
+      "total_bytes": 392880,
+      "bytes_per_entity": 392.88,
+      "bytes_per_1k_entities": 392880.0,
+      "confidence": "SPECULATIVE",
+      "notes": "tracemalloc allocation delta for world construction"
+    },
+    "SCE-03": {
+      "id": "SCE-03",
+      "name": "Tick cost scaling law",
+      "naive": {
+        "samples": [
+          {
+            "n": 10,
+            "ticks_per_sec": 30506.15096117885,
+            "sec_per_tick": 3.278027441982333e-05
+          },
+          {
+            "n": 50,
+            "ticks_per_sec": 1515.1909819574914,
+            "sec_per_tick": 0.0006599828087071172
+          },
+          {
+            "n": 100,
+            "ticks_per_sec": 310.84834914182727,
+            "sec_per_tick": 0.00321700276923054
+          },
+          {
+            "n": 500,
+            "ticks_per_sec": 9.532783359225702,
+            "sec_per_tick": 0.10490115659999902
+          },
+          {
+            "n": 1000,
+            "ticks_per_sec": 2.021794145651054,
+            "sec_per_tick": 0.494610196666675
+          }
+        ],
+        "r2_by_model": {
+          "O(N)": 0.8998231975679726,
+          "O(N log N)": 0.9323725076305157,
+          "O(N^2)": 0.9981726805778995
+        },
+        "best_fit": "O(N^2)"
+      },
+      "bvh": {
+        "samples": [
+          {
+            "n": 10,
+            "ticks_per_sec": 10160.845280898222,
+            "sec_per_tick": 9.841700885653084e-05
+          },
+          {
+            "n": 50,
+            "ticks_per_sec": 1657.7305193270968,
+            "sec_per_tick": 0.0006032343546440337
+          },
+          {
+            "n": 100,
+            "ticks_per_sec": 757.5924713121963,
+            "sec_per_tick": 0.0013199708786281086
+          },
+          {
+            "n": 500,
+            "ticks_per_sec": 121.0153465314193,
+            "sec_per_tick": 0.008263414754097897
+          },
+          {
+            "n": 1000,
+            "ticks_per_sec": 54.75824594256774,
+            "sec_per_tick": 0.018262089714284002
+          },
+          {
+            "n": 5000,
+            "ticks_per_sec": 7.966824263594442,
+            "sec_per_tick": 0.12552052950002235
+          }
+        ],
+        "r2_by_model": {
+          "O(N)": 0.9947644310264084,
+          "O(N log N)": 0.9995863788773113,
+          "O(N^2)": 0.9814755269014694
+        },
+        "best_fit": "O(N log N)"
+      },
+      "threshold": "O(N log N) or better (BVH)",
+      "confidence": "PLAUSIBLE",
+      "notes": "seconds/tick fit through origin; best_fit is the model with highest R^2"
+    },
+    "SCE-04": {
+      "id": "SCE-04",
+      "name": "Serial sufficiency",
+      "mode": "naive",
+      "wall_seconds": 60.002438213000005,
+      "ticks_completed": 18644,
+      "ticks_per_sec": 310.72070661222943,
+      "threshold_ticks_per_sec": 60.0,
+      "passed": true,
+      "headroom_x": 5.178678443537157,
+      "confidence": "SPECULATIVE",
+      "notes": "empirical pure-Python single-core measurement; the paper's 162k analytical estimate assumes 1 op = 1 cycle at 1 GHz"
+    }
+  }
+}

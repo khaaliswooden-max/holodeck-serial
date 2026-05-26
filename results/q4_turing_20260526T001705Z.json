@@ -1,0 +1,20 @@
+{
+  "experiment": "Q4 Turing completeness",
+  "timestamp_utc": "2026-05-26T00:17:05.908135+00:00",
+  "reduction": "Minsky register machine; register r = type-r population; INC=create, DEC=query+destroy, JZ=query-zero",
+  "all_programs_correct": true,
+  "n_checks": 12,
+  "primitive_calls_9x9": {
+    "create": 261,
+    "destroy": 171,
+    "query": 361
+  },
+  "minimal_subset": [
+    "create",
+    "destroy",
+    "query"
+  ],
+  "move_required_for_universality": false,
+  "caveat": "Turing-completeness requires query-conditioned control flow (PC + JZ); the primitives supply the universal operations.",
+  "verdict": "T is Turing-complete: {create, destroy, query} implement a Minsky register machine (Turing-complete with >=2 unbounded registers + query-conditioned branching). All 12 ADD/MUL programs ran correctly using only the interaction vocabulary as storage. `move` is not needed for universality. Caveat: branching lives in the control layer (PC + JZ), as with any instruction set."
+}
