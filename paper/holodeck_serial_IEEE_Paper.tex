@@ -53,10 +53,18 @@ interactive simulation engine satisfying a formally defined minimum viable world
 benchmark domains spanning world state integrity, temporal coherence, physical
 simulation fidelity, interaction responsiveness, environmental generation, serial
 compute efficiency, and determinism. We conduct an adversarial integrity analysis of
-the framework itself, identify four critical open research questions, and provide a
-partial analytical grounding for the serial sufficiency claim via the MVW definition.
-This work is a position paper: the benchmark set is the contribution, and documented
-gaps constitute the research agenda.
+the framework itself and provide both analytical and empirical grounding for the
+serial sufficiency claim via the MVW definition and a single-threaded,
+standard-library reference implementation. Profiling the reference engine yields a
+first empirical serial-sufficiency result ($\sim$311 ticks/sec on a single core,
+clearing the 60 ticks/sec threshold), and we report initial results on the four
+research questions originally posed as open: the emergent Maxwell--Boltzmann
+velocity distribution becomes Gaussian to within $2\%$ near $N=100$ (with density,
+not $N$, as the binding parameter); the bounding-volume hierarchy is
+serial-compatible; fixed-point arithmetic preserves collision fidelity to
+$10^{-6}$; and the interaction vocabulary is Turing-complete via a register-machine
+reduction. The benchmark set is the framework contribution; the reference
+implementation and these results move three of four open questions to resolved.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -402,6 +410,41 @@ rate far exceeds the 60 ticks/sec threshold:
 
 This provides analytical (though not empirical) grounding for SCE-04.
 
+\subsection{Empirical Reference Implementation}
+
+We implemented the MVW as a single-threaded, standard-library-only Python kernel
+(world state, Newtonian physics with both naive $O(N^2)$ and BVH $O(N\log N)$
+collision detection, a serial tick scheduler, and an observer interface). It
+serves as the empirical counterpart to the analytical model and as the
+system-under-test for the benchmark suite. Profiling on a single pinned core
+yields the first empirical SCE results (Table~\ref{tab:sce-emp}).
+
+\begin{table}[ht]
+\caption{Empirical SCE results (CPython, single core)}
+\label{tab:sce-emp}
+\centering
+\small
+\begin{tabular}{p{0.8cm}p{4.4cm}p{2.2cm}}
+\toprule
+\textbf{ID} & \textbf{Measurement} & \textbf{Value} \\
+\midrule
+SCE-01 & Mean cost per tick (MVW, naive) & $\sim$3.25 ms \\
+SCE-02 & RAM per entity & $\sim$393 bytes \\
+SCE-03 & Scaling-law best fit (naive / BVH) & $O(N^2)$ / $O(N\log N)$ \\
+SCE-04 & Sustained tick rate (60\,s, single core) & $\sim$311 ticks/sec \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+SCE-04 passes with $\sim 5\times$ headroom over the 60 ticks/sec threshold. The
+gap between this and the analytical $\sim$162{,}000 ticks/sec is the CPython
+interpreter tax: each abstract ``operation'' in the analytical model maps to many
+interpreter bytecodes. The measurement therefore corroborates the serial
+sufficiency claim conservatively---a compiled serial implementation would
+approach the analytical figure. SCE-03 empirically confirms the two scaling
+regimes assumed above. Advancing SCE-04 to VERIFIED requires reproduction on the
+declared serial-baseline hardware (a documented validation plan).
+
 \subsection{Scaling Boundary}
 
 Under the naive $O(N^2)$ collision model, serial sufficiency degrades when:
@@ -448,73 +491,116 @@ marked SPECULATIVE (WSI-03, TC-03, SCE-01, SCE-02, EG-03) lack empirical
 calibration. SCE-04 receives analytical grounding via MVW (Section IV). Remaining
 thresholds are documented as open calibration tasks.
 
-\textbf{Attack 4 --- Floating Point Non-Determinism (unresolved):} DR-01
-cross-platform determinism is non-trivial. IEEE 754 floating point behavior
-varies across compiler optimizations and CPU architectures
-\cite{goldberg1991, monniaux2008}. This is documented as Open Question Q3:
-the architectural decision between fixed-point arithmetic and scoped IEEE 754
-compliance is deferred to the implementation phase.
+\textbf{Attack 4 --- Floating Point Non-Determinism (addressed):} DR-01
+cross-platform determinism is non-trivial because IEEE 754 behavior varies across
+compiler optimizations and CPU architectures \cite{goldberg1991, monniaux2008}.
+Investigation (Q3, Section~VI) reduces this to a single hazardous operation in the
+kernel---now replaced by a portable cube root---and demonstrates a fixed-point
+fallback that is bit-identical across platforms by construction.
 
 \textbf{Attack 5 --- Missing Observer Domain (resolved):} The original seven
 domains constituted a formally closed system with no external verification
 mechanism. Domain 8 (Observer Interface) resolves this.
 
-\textbf{Net integrity assessment:} 3 of 5 attacks fully resolved, 1 partially
-resolved (threshold calibration), 1 deferred (floating point strategy). The
-framework is structurally sound for a position paper contribution.
+\textbf{Net integrity assessment:} 4 of 5 attacks fully resolved (the
+floating-point strategy now addressed via Q3), 1 partially resolved (threshold
+calibration, with SCE now empirically measured). The framework is structurally
+sound and now backed by a reference implementation.
 
 %% ============================================================
-\section{Open Research Questions}
+\section{Open Research Questions: Initial Results}
 
-Four questions remain unresolved and constitute the forward research agenda
-emerging from this framework.
+The four questions framed by this work were investigated with the reference
+implementation. Three are now resolved and one is partially resolved with
+empirical evidence; the experiments are reproducible from the repository.
 
-\textbf{Q1 --- Minimum emergence threshold:} What is the minimum entity count $N$
-at which a Newtonian simulation exhibits non-trivial emergent behavior? This
-determines whether $N=100$ is conservative, sufficient, or excessive for the MVW
-claim. Related work in agent-based modeling \cite{axelrod1997, epstein1996} is
-directionally relevant but not directly applicable to Newtonian simulation engines.
+\textbf{Q1 --- Minimum emergence threshold (partial):} We operationalized
+``emergent behavior'' with three proxies. (i)~\textit{Thermalization}: starting
+each particle at equal speed with random direction (each velocity component
+Uniform, excess kurtosis $-1.2$), an isolated elastic gas relaxes toward the
+microcanonical equilibrium, whose single-component excess kurtosis is exactly
+$-6/(3N+2)$---Gaussian (the Maxwell--Boltzmann signature) only as
+$N\to\infty$. Measured equilibrium kurtosis tracks this law
+(Fig.~\ref{fig:q1}), giving a concrete threshold: the velocity distribution is
+Gaussian to within $2\%$ at $N\approx 100$, within $5\%$ at $N\gtrsim 40$.
+(ii)~\textit{Mixing}: a $10^{-6}$ perturbation diverges with positive Lyapunov
+exponent for all $N\ge 2$---chaos is not the binding constraint.
+(iii)~\textit{Interaction-onset}: at the nominal box $L=100$ the gas is
+collision-starved ($\sim$0 collisions/particle at $N=100$). The binding
+under-specification is therefore \textit{density}, not $N$: we recommend
+promoting the MVW to a 7-tuple with an explicit packing fraction.
+$N=100$ is supported as a statistical minimum.
 
-\textbf{Q2 --- BVH serial classification:} Does a bounding volume hierarchy count
-as a ``serial'' data structure under Interpretation 1? BVH traversal is inherently
-sequential, but its construction can be parallelized. If BVH construction is
-classified as a serial operation, the scaling analysis in Section IV holds; if not,
-an alternative serial-compatible spatial index is required.
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.82\columnwidth]{figures/fig4_q1_kurtosis.pdf}
+\caption{Q1. Measured equilibrium velocity-component excess kurtosis vs.\ $N$
+(fixed density) tracks the microcanonical law $-6/(3N+2)$, rising from the
+non-equilibrium initial value ($-1.2$) into the $\pm2\%$ Gaussian
+(Maxwell--Boltzmann) band near $N=100$.}
+\label{fig:q1}
+\end{figure}
 
-\textbf{Q3 --- Fixed-point vs. IEEE 754:} Can elastic collision response (PSF-02)
-be implemented in fixed-point arithmetic without loss of physical fidelity at the
-$10^{-6}$ threshold? This is an empirical question requiring profiling on target
-hardware architectures \cite{sterbenz1974}.
+\textbf{Q2 --- BVH serial classification (resolved):} The reference BVH build and
+traversal run in a single thread and are deterministic; the median-split
+construction has measured log--log time-scaling exponent $\approx 1.12$
+($O(N\log N)$) versus $\approx 2.06$ for the naive scan. An independent serial
+broad-phase (sweep-and-prune) and the naive scan return identical overlap sets,
+so serial spatial indexing is not unique to BVH. Under Interpretation 1 the BVH
+\textit{counts as serial}: it does not require parallelism, and the Section~IV
+scaling analysis holds.
 
-\textbf{Q4 --- Turing completeness of interaction vocabulary:} Is $T=4$
-$\{\text{move, create, destroy, query}\}$ a Turing-complete interaction vocabulary
-for world simulation? If so, the MVW interaction set is minimal; if not, a larger
-$T$ may be required for ``arbitrary environment'' generation as claimed in EG-01.
+\textbf{Q3 --- Fixed-point vs. IEEE 754 (resolved):} A static audit shows the
+kernel hot path uses only correctly-rounded IEEE-754 operations
+($+,-,\times,\div,\sqrt{\ }$), which are bit-portable; the sole cross-platform
+hazard is the cube-root \texttt{pow} used once per entity for the collision
+radius, now replaced by a portable Newton-based cube root. Independently, a
+pure-integer fixed-point elastic-collision solver---bit-identical across
+platforms by construction---preserves momentum conservation to within $10^{-6}$
+(the PSF-02 threshold) at scale factor $S\ge 2^{26}$, with error scaling as
+$1/S$. Cross-platform determinism is thus achievable either way.
+
+\textbf{Q4 --- Turing completeness of interaction vocabulary (resolved):} The
+subset $\{\text{create, destroy, query}\}$ is Turing-complete by reduction to a
+Minsky register machine \cite{minsky1967}: a register is the population of an
+entity type, with $\text{INC}=\text{create}$, $\text{DEC}=\text{query}{+}\text{destroy}$,
+and $\text{JZ}=\text{query-for-zero}$. We confirmed this empirically by storing
+all machine state in an MVW world and executing register-machine programs
+(addition and multiplication, the latter with nested loops) through the
+interaction vocabulary alone; all returned correct results. The vocabulary is
+universal under query-conditioned control; \texttt{move} adds spatial
+expressiveness, not computational power, so $T=4$ is sufficient (and not minimal)
+for the ``arbitrary environment'' claim of EG-01.
 
 %% ============================================================
 \section{Conclusion}
 
 We have presented a benchmark framework for holodeck-class simulation systems
-grounded in serial compute foundations. The framework comprises eight domains,
-27 individual benchmarks, and a formal Minimum Viable World definition that
-provides analytical grounding for the serial sufficiency claim (SCE-04). An
-adversarial integrity analysis resolved three of five identified failures;
-two remain as documented open questions.
+grounded in serial compute foundations, comprising eight domains, a formal
+Minimum Viable World definition, and a single-threaded standard-library reference
+implementation. An adversarial integrity analysis resolved four of five
+identified failures, the last (floating-point determinism) addressed through the
+research questions below.
 
-The central analytical result is that a 1 GHz single-core CPU achieves
-approximately $162{,}000$ ticks/sec for a 100-entity Newtonian simulation---a
-margin exceeding the 60 ticks/sec threshold by a factor of approximately $2{,}700$.
-This result is analytical, not empirical; empirical validation constitutes the
-primary next research phase.
+The serial sufficiency claim is supported both analytically and empirically. The
+analytical model gives $\sim$162{,}000 ticks/sec for a 100-entity Newtonian
+simulation at 1 GHz; the CPython reference engine sustains $\sim$311 ticks/sec on
+a single core---still $\sim 5\times$ over the 60 ticks/sec threshold, the gap
+being interpreter overhead rather than an architectural limit. Advancing SCE-04
+from measured to formally VERIFIED requires reproduction on the declared
+serial-baseline hardware.
 
-Four open research questions frame the forward agenda: minimum emergence threshold
-($N$ calibration), BVH serial classification, fixed-point arithmetic fidelity, and
-Turing completeness of the minimal interaction vocabulary. Resolution of these
-questions will determine whether the serial sufficiency claim advances from
-analytical to empirically verified status.
+The four research questions originally posed as open are now substantially
+answered: the emergent Maxwell--Boltzmann velocity distribution is Gaussian to
+within $2\%$ near $N=100$ (with spatial density, not $N$, identified as the
+binding parameter); the bounding-volume hierarchy is serial-compatible; both a
+portable cube root and a fixed-point fallback secure cross-platform determinism;
+and the interaction vocabulary is Turing-complete via a register-machine
+reduction verified in the reference engine. Three of the four are resolved; Q1
+remains partially open on density calibration.
 
-The benchmark set is available as an open repository to support community validation
-efforts.
+The benchmark set, reference implementation, and reproducible experiments are
+available as an open repository to support community validation efforts.
 
 %% ============================================================
 \bibliographystyle{IEEEtran}

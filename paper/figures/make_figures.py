@@ -34,6 +34,14 @@ def _latest_sce_profile():
         return json.load(fh)
 
 
+def _latest_q1():
+    files = sorted(glob.glob(os.path.join(_RESULTS, "q1_emergence_*.json")))
+    if not files:
+        return None
+    with open(files[-1]) as fh:
+        return json.load(fh)
+
+
 # ---------------------------------------------------------------------------
 # Figure 1 -- benchmark domain dependency graph
 # ---------------------------------------------------------------------------
@@ -175,12 +183,47 @@ def fig3_mvw_diagram():
     plt.close(fig)
 
 
+def fig4_q1_kurtosis():
+    """Q1 result: emergent velocity-component kurtosis vs N against the
+    microcanonical law -6/(3N+2). Skipped if no q1 results are present."""
+    data = _latest_q1()
+    if not data:
+        print("  (no q1_emergence results; skipping fig4)")
+        return
+    rows = sorted(data["fixed_density_sweep"], key=lambda r: r["n"])
+    ns = [r["n"] for r in rows]
+    kurt = [r["eq_kurt_mean"] for r in rows]
+    kerr = [r["eq_kurt_std"] for r in rows]
+    theory = [r["eq_kurt_theory"] for r in rows]
+
+    fig, ax = plt.subplots(figsize=(3.4, 2.7))
+    ax.errorbar(ns, kurt, yerr=kerr, fmt="o", color="#1f3b73", capsize=2.5,
+                markersize=4, label="measured (eq.)", zorder=3)
+    ax.plot(ns, theory, "-", color="#b5482a", linewidth=1.6,
+            label=r"$-6/(3N+2)$")
+    ax.axhline(0.0, color="green", linestyle="--", linewidth=1.0,
+               label="Gaussian (MB)")
+    ax.axhspan(-0.02, 0.02, color="green", alpha=0.10)
+    ax.axhline(-1.2, color="#999999", linestyle=":", linewidth=0.9,
+               label="initial (uniform)")
+    ax.axvline(100, color="#444444", linestyle=":", linewidth=0.9)
+    ax.set_xscale("log")
+    ax.set_xlabel("entity count N")
+    ax.set_ylabel("excess kurtosis")
+    ax.legend(fontsize=6, loc="lower right")
+    ax.grid(True, which="both", alpha=0.2)
+    fig.tight_layout()
+    fig.savefig(os.path.join(_HERE, "fig4_q1_kurtosis.pdf"))
+    plt.close(fig)
+
+
 def main():
     fig1_dependency_graph()
     fig2_scaling_law()
     fig3_mvw_diagram()
+    fig4_q1_kurtosis()
     print("wrote fig1_dependency_graph.pdf/.svg, fig2_scaling_law.pdf, "
-          "fig3_mvw_diagram.pdf to paper/figures/")
+          "fig3_mvw_diagram.pdf, fig4_q1_kurtosis.pdf to paper/figures/")
 
 
 if __name__ == "__main__":
