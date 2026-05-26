@@ -81,15 +81,6 @@ world that satisfies the Tier C definition:
 MVW = (N=100, M=8, P=4, K=3, T=4, Φ=1)
 ```
 
-**Analytical result (SCE-04 grounding):**
-At 1 GHz serial CPU, MVW(100,8,4,3,4,1) achieves ~162,000 ticks/sec against a
-60 ticks/sec requirement — a 2,700× margin (analytical).
-
-**Empirical validation (Phase 4):** `src/mvw/mvw_profiler.py` now measures SCE-04
-directly. On the reference run the MVW sustains well above the 60 ticks/sec
-requirement with positive headroom (PASS); exact ticks/sec is machine-dependent
-and recorded per-run in `results/sce_profile_*.json`. This upgrades SCE-04 from
-SPECULATIVE toward PLAUSIBLE on real hardware.
 **SCE-04 — analytical claim and empirical measurement:**
 - *Analytical* (1 GHz, 1 op/cycle): MVW(100,8,4,3,4,1) achieves ~162,000
   ticks/sec against a 60 ticks/sec requirement — a ~2,700× margin (SPECULATIVE).
