@@ -102,8 +102,8 @@ Empirical validation is Phase 4.
 ## Setup
 
 ```bash
-git clone https://github.com/khaaliswooden-max/holodeck-serial
-cd holodeck-serial
+git clone https://github.com/khaaliswooden-max/hsc
+cd hsc
 pip install -r requirements.txt  # Phase 4
 ```
 
@@ -127,7 +127,7 @@ pdflatex holodeck_serial_IEEE_Paper.tex
                and Open Research Agenda},
   year      = {2026},
   institution = {Zuup Innovation Lab / Southern New Hampshire University},
-  note      = {Position paper. Repository: github.com/khaaliswooden-max/holodeck-serial}
+  note      = {Position paper. Repository: github.com/khaaliswooden-max/hsc}
 }
 ```
 
