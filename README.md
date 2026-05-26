@@ -81,10 +81,14 @@ world that satisfies the Tier C definition:
 MVW = (N=100, M=8, P=4, K=3, T=4, Φ=1)
 ```
 
-**Analytical result (SCE-04 grounding):**
-At 1 GHz serial CPU, MVW(100,8,4,3,4,1) achieves ~162,000 ticks/sec against a
-60 ticks/sec requirement — a 2,700× margin. This is analytical, not empirical.
-Empirical validation is Phase 4.
+**SCE-04 — analytical claim and empirical measurement:**
+- *Analytical* (1 GHz, 1 op/cycle): MVW(100,8,4,3,4,1) achieves ~162,000
+  ticks/sec against a 60 ticks/sec requirement — a ~2,700× margin (SPECULATIVE).
+- *Empirical* (CPython, single core, 60s wall-clock): **~371 ticks/sec**, a
+  **~6.2× margin** (PASS). The gap from the analytical figure is the interpreter
+  tax; the rate is host-dependent (a prior run measured ~311 ticks/sec / ~5.2×).
+  Reproduction on declared baseline hardware (Phase 4) is what advances SCE-04
+  from SPECULATIVE toward VERIFIED.
 
 ---
 

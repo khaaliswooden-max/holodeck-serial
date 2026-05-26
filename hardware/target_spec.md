@@ -39,11 +39,19 @@ From `results/sce_profile_*.json` and `results/benchmark_report_*.json`:
 | SCE-02 RAM per entity | ~393 bytes | tracemalloc construction delta |
 | SCE-02 RAM per 1K entities | ~384 KB | SCE-02 |
 | MVW(100) world footprint | ~38 KB | 100 × 393 bytes |
-| SCE-01 mean cost/tick | ~3.25 ms (N=100, naive) | perf_counter, 10K ticks |
-| SCE-04 sustained rate | **~311 ticks/sec** (60s wall-clock) | SCE-04 |
-| SCE-04 headroom vs 60 | **~5.2×** | SCE-04 |
+| SCE-01 mean cost/tick | ~2.81 ms (N=100, naive) | perf_counter, 10K ticks |
+| SCE-04 sustained rate | **~371 ticks/sec** (60s wall-clock) | SCE-04 |
+| SCE-04 headroom vs 60 | **~6.2×** | SCE-04 |
 | SCE-03 naive scaling | O(N²) (best R² fit) | SCE-03 |
 | SCE-03 BVH scaling | O(N log N) (best R² fit) | SCE-03 |
+
+**Empirical rate is host-dependent.** The table reflects the current run
+(`sce_profile_20260526T053035Z.json`, ~371 ticks/sec). A prior cloud run
+(`sce_profile_20260525T233626Z.json`) measured ~311 ticks/sec — a ~19% spread,
+above the ±10% reproducibility target in §3. Both clear the 60 ticks/sec
+threshold by >5×; the spread reflects shared/ephemeral cloud-CPU contention, not
+a defect. Advancing SCE-04 to VERIFIED requires the dedicated-hardware reproduction
+in §3, not more cloud runs. # PLAUSIBLE — variance attributed to host, not yet isolated.
 
 **Minimum RAM derivation:** MVW(100) world ≈ 38 KB; CPython interpreter base
 + profiler (tracemalloc, snapshots) ≈ tens of MB. The 64 MB requirement is set

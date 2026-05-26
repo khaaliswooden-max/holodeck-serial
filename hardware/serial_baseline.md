@@ -36,7 +36,8 @@ threshold would still be met well below it.
 This "1 op = 1 cycle" model is an idealization. The CPython reference
 implementation pays a large interpreter tax (each "op" is many bytecode
 operations), yet the measured rate (`results/sce_profile_*.json`) is still
-~311 ticks/sec for N=100 — ~5.2× over threshold. A compiled or lower-level
+~371 ticks/sec for N=100 — ~6.2× over threshold (host-dependent; a prior run
+measured ~311 / ~5.2×, so ~310–370 across runs). A compiled or lower-level
 serial implementation would approach the analytical figure.
 
 ---
