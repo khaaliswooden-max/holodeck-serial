@@ -1,0 +1,132 @@
+{
+  "profiler": "holodeck-serial SCE",
+  "timestamp_utc": "2026-05-26T05:30:35.852605+00:00",
+  "platform": "Linux-6.18.5-x86_64-with-glibc2.39",
+  "processor": "x86_64",
+  "python_version": "3.11.15",
+  "cpu0_pinned": true,
+  "cpu_freq_hz": null,
+  "mvw": "MVW(100,8,4,3,4,1)",
+  "results": {
+    "SCE-01": {
+      "id": "SCE-01",
+      "name": "CPU cost per tick (MVW N=100)",
+      "mode": "naive",
+      "n_ticks": 10000,
+      "mean_ns": 2812572.741699984,
+      "std_ns": 553609.6142916859,
+      "min_ns": 2398102.00000079,
+      "max_ns": 8716880.99999801,
+      "ticks_per_sec": 355.5463598056408,
+      "cpu_freq_hz": null,
+      "est_cycles_per_tick": null,
+      "confidence": "SPECULATIVE",
+      "notes": "est_cycles_per_tick is wall-time x measured CPU freq, not a hardware perf counter"
+    },
+    "SCE-02": {
+      "id": "SCE-02",
+      "name": "RAM per 1K entities",
+      "n_entities": 1000,
+      "total_bytes": 392848,
+      "bytes_per_entity": 392.848,
+      "bytes_per_1k_entities": 392848.0,
+      "confidence": "SPECULATIVE",
+      "notes": "tracemalloc allocation delta for world construction"
+    },
+    "SCE-03": {
+      "id": "SCE-03",
+      "name": "Tick cost scaling law",
+      "naive": {
+        "samples": [
+          {
+            "n": 10,
+            "ticks_per_sec": 34892.81706371646,
+            "sec_per_tick": 2.8659193614947677e-05
+          },
+          {
+            "n": 50,
+            "ticks_per_sec": 1774.180070921745,
+            "sec_per_tick": 0.0005636406452702781
+          },
+          {
+            "n": 100,
+            "ticks_per_sec": 376.9932493294853,
+            "sec_per_tick": 0.0026525673915344253
+          },
+          {
+            "n": 500,
+            "ticks_per_sec": 9.03911309928853,
+            "sec_per_tick": 0.11063032280000015
+          },
+          {
+            "n": 1000,
+            "ticks_per_sec": 1.6899487088511778,
+            "sec_per_tick": 0.5917339353333375
+          }
+        ],
+        "r2_by_model": {
+          "O(N)": 0.8839549212680904,
+          "O(N log N)": 0.9185146548680884,
+          "O(N^2)": 0.9949753817152577
+        },
+        "best_fit": "O(N^2)"
+      },
+      "bvh": {
+        "samples": [
+          {
+            "n": 10,
+            "ticks_per_sec": 12026.716196152582,
+            "sec_per_tick": 8.314821632856906e-05
+          },
+          {
+            "n": 50,
+            "ticks_per_sec": 1892.1614926386403,
+            "sec_per_tick": 0.0005284961161562848
+          },
+          {
+            "n": 100,
+            "ticks_per_sec": 864.59137660396,
+            "sec_per_tick": 0.0011566157459584124
+          },
+          {
+            "n": 500,
+            "ticks_per_sec": 140.67035092618642,
+            "sec_per_tick": 0.007108818549295633
+          },
+          {
+            "n": 1000,
+            "ticks_per_sec": 62.69919337801325,
+            "sec_per_tick": 0.015949168499999722
+          },
+          {
+            "n": 5000,
+            "ticks_per_sec": 7.942279089602403,
+            "sec_per_tick": 0.12590844374999932
+          }
+        ],
+        "r2_by_model": {
+          "O(N)": 0.9909405808246322,
+          "O(N log N)": 0.9980900787894667,
+          "O(N^2)": 0.9875078518884818
+        },
+        "best_fit": "O(N log N)"
+      },
+      "threshold": "O(N log N) or better (BVH)",
+      "confidence": "PLAUSIBLE",
+      "notes": "seconds/tick fit through origin; best_fit is the model with highest R^2"
+    },
+    "SCE-04": {
+      "id": "SCE-04",
+      "name": "Serial sufficiency",
+      "mode": "naive",
+      "wall_seconds": 60.000125478,
+      "ticks_completed": 22273,
+      "ticks_per_sec": 371.2158903428752,
+      "threshold_ticks_per_sec": 60.0,
+      "passed": true,
+      "headroom_x": 6.186931505714586,
+      "confidence": "SPECULATIVE",
+      "notes": "empirical pure-Python single-core measurement; the paper's 162k analytical estimate assumes 1 op = 1 cycle at 1 GHz"
+    }
+  }
+}

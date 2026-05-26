@@ -9,6 +9,17 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+- Reconciled SCE-04 numbers against a fresh empirical profiler run
+  (`results/sce_profile_20260526T053035Z.json`): ~371 ticks/sec, ~6.2× headroom
+  (was ~311 / ~5.2×). Updated `CLAUDE.md`, `README.md`, `hardware/target_spec.md`,
+  `hardware/serial_baseline.md`, and the paper (figure caption + conclusion).
+  The ~162,000 ticks/sec / ~2,700× figure is retained but explicitly scoped as
+  *analytical* (1-op-per-cycle); the empirical CPython rate is the load-bearing
+  validation. Documented ~19% run-to-run variance as host-dependent (cloud CPU
+  contention), exceeding the ±10% reproducibility target — flagged for
+  dedicated-hardware reproduction.
+
 ### In Progress
 - Session 2: MVW reference implementation (`src/mvw/mvw_instance.py`)
 - Session 3: SCE profiler — empirical SCE-04 result

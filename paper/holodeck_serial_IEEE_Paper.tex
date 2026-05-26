@@ -420,8 +420,9 @@ claim at larger $N$.
 \caption{SCE scaling law. The analytical 1\,GHz model places naive $O(N^2)$ and
 BVH $O(N\log N)$ tick rates far above the 60 ticks/sec threshold at $N=100$; the
 naive curve crosses the threshold near $N\approx5{,}774$. The black marker is the
-empirical CPython reference measurement (\(\sim\)311 ticks/sec over a 60\,s
-single-core run), which clears the threshold by \(\sim5\times\) despite a large
+empirical CPython reference measurement (\(\sim\)371 ticks/sec over a 60\,s
+single-core run; host-dependent, $\sim$310--370 across runs), which clears the
+threshold by \(\sim6\times\) despite a large
 interpreter tax. A profiling sweep confirms the empirical fits: naive$=O(N^2)$,
 BVH$=O(N\log N)$.}
 \label{fig:scaling}
@@ -504,8 +505,12 @@ two remain as documented open questions.
 The central analytical result is that a 1 GHz single-core CPU achieves
 approximately $162{,}000$ ticks/sec for a 100-entity Newtonian simulation---a
 margin exceeding the 60 ticks/sec threshold by a factor of approximately $2{,}700$.
-This result is analytical, not empirical; empirical validation constitutes the
-primary next research phase.
+This figure is analytical (idealized 1-op-per-cycle model). A CPython reference
+implementation, bearing the full interpreter tax, sustains $\sim$371 ticks/sec
+($\sim$6$\times$ headroom) on a single core---so the qualitative serial-sufficiency
+claim holds empirically, while the $\sim$2{,}700$\times$ margin remains a property
+of the analytical model. Reproduction on declared baseline hardware constitutes
+the primary next research phase.
 
 Four open research questions frame the forward agenda: minimum emergence threshold
 ($N$ calibration), BVH serial classification, fixed-point arithmetic fidelity, and
