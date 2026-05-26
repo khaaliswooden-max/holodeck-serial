@@ -51,9 +51,17 @@ MVW = (N=100, M=8, P=4, K=3, T=4, Φ=1)
 | T | 4 | Interaction types: {move, create, destroy, query} |
 | Φ | 1 | Observer API endpoint |
 
-**Key analytical result (needs empirical verification — your job):**
-At 1 GHz serial CPU, MVW achieves ~162,000 ticks/sec vs 60 ticks/sec threshold.
-Margin: ~2,700×. This is the paper's central claim. SCE-04 must produce a real number.
+**Key result — analytical claim vs. empirical measurement:**
+- *Analytical* (1 op = 1 cycle @ 1 GHz): MVW achieves ~162,000 ticks/sec vs the
+  60 ticks/sec threshold — a ~2,700× margin. This is the paper's headline claim
+  and remains SPECULATIVE (idealized 1-op-per-cycle model).
+- *Empirical* (CPython, single core, `results/sce_profile_*.json`): SCE-04
+  sustains **~371 ticks/sec** over a 60s run — a **~6.2× margin** (PASS). The
+  ~440× gap from the analytical figure is the CPython interpreter tax; a compiled
+  serial implementation would approach the analytical bound. The rate is
+  host-dependent — a prior cloud run measured ~311 ticks/sec / ~5.2×, so treat
+  the empirical figure as ~310–370 ticks/sec (≥5× headroom) pending the
+  reproduce-on-baseline-hardware plan in `hardware/target_spec.md`.
 
 ---
 

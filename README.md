@@ -2,7 +2,7 @@
 
 > **Toward a Holodeck on Serial Compute: A Benchmark Framework and Open Research Agenda**
 >
-> Zuup Innovation Lab | A. Khaalis Wooden, Sr.
+> Zuup Innovation Lab | Aldrich K. Wooden, Sr.
 
 ---
 
@@ -90,6 +90,14 @@ directly. On the reference run the MVW sustains well above the 60 ticks/sec
 requirement with positive headroom (PASS); exact ticks/sec is machine-dependent
 and recorded per-run in `results/sce_profile_*.json`. This upgrades SCE-04 from
 SPECULATIVE toward PLAUSIBLE on real hardware.
+**SCE-04 — analytical claim and empirical measurement:**
+- *Analytical* (1 GHz, 1 op/cycle): MVW(100,8,4,3,4,1) achieves ~162,000
+  ticks/sec against a 60 ticks/sec requirement — a ~2,700× margin (SPECULATIVE).
+- *Empirical* (CPython, single core, 60s wall-clock): **~371 ticks/sec**, a
+  **~6.2× margin** (PASS). The gap from the analytical figure is the interpreter
+  tax; the rate is host-dependent (a prior run measured ~311 ticks/sec / ~5.2×).
+  Reproduction on declared baseline hardware (Phase 4) is what advances SCE-04
+  from SPECULATIVE toward VERIFIED.
 
 ---
 
@@ -134,12 +142,12 @@ pdflatex holodeck_serial_IEEE_Paper.tex
 
 ```bibtex
 @misc{wooden2026holodeck,
-  author    = {Wooden, Aldrich K.},
-  title     = {Toward a Holodeck on Serial Compute: A Benchmark Framework
-               and Open Research Agenda},
-  year      = {2026},
-  institution = {Zuup Innovation Lab / Southern New Hampshire University},
-  note      = {Position paper. Repository: github.com/khaaliswooden-max/holodeck-serial}
+  author       = {Wooden, Sr., Aldrich K.},
+  title        = {Toward a Holodeck on Serial Compute: A Benchmark Framework
+                  and Open Research Agenda},
+  year         = {2026},
+  howpublished = {Position paper, Zuup Innovation Lab / Southern New Hampshire University},
+  note         = {Repository: github.com/khaaliswooden-max/holodeck-serial}
 }
 ```
 
