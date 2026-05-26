@@ -1,0 +1,67 @@
+{
+  "experiment": "Q3 fixed-point fidelity",
+  "timestamp_utc": "2026-05-26T00:14:30.734181+00:00",
+  "ieee754_audit": {
+    "hot_path_ops": [
+      "+",
+      "-",
+      "*",
+      "/",
+      "math.sqrt"
+    ],
+    "correctly_rounded_portable": true,
+    "portability_hazard": "mass ** (1.0/3.0)  (libm pow, not correctly rounded; ~1 ulp variance possible across libms)",
+    "hazard_location": "world.make_entity (radius), computed once per entity",
+    "note": "basic ops and sqrt are correctly-rounded per IEEE-754 and bit-portable; only the cube-root pow is a cross-platform risk"
+  },
+  "float_reference": {
+    "max_momentum_err": 2.842170943040401e-14,
+    "max_ke_err": 2.2737367544323206e-13
+  },
+  "fixed_point_sweep": [
+    {
+      "scale_bits": 10,
+      "scale": 1024,
+      "max_momentum_err": 0.0087890625,
+      "max_ke_err": 2.5108442306518555,
+      "meets_1e6_momentum": false
+    },
+    {
+      "scale_bits": 14,
+      "scale": 16384,
+      "max_momentum_err": 0.00054931640625,
+      "max_ke_err": 0.14611675590276718,
+      "meets_1e6_momentum": false
+    },
+    {
+      "scale_bits": 18,
+      "scale": 262144,
+      "max_momentum_err": 3.0517578125e-05,
+      "max_ke_err": 0.008512194457580335,
+      "meets_1e6_momentum": false
+    },
+    {
+      "scale_bits": 22,
+      "scale": 4194304,
+      "max_momentum_err": 2.1457672119140625e-06,
+      "max_ke_err": 0.0003461427161255415,
+      "meets_1e6_momentum": false
+    },
+    {
+      "scale_bits": 26,
+      "scale": 67108864,
+      "max_momentum_err": 1.341104507446289e-07,
+      "max_ke_err": 3.718319464951492e-05,
+      "meets_1e6_momentum": true
+    },
+    {
+      "scale_bits": 30,
+      "scale": 1073741824,
+      "max_momentum_err": 8.381903171539307e-09,
+      "max_ke_err": 2.592979399196338e-06,
+      "meets_1e6_momentum": true
+    }
+  ],
+  "min_scale_bits_for_1e6": 26,
+  "verdict": "Fixed-point preserves elastic-collision momentum to <= 1e-6 for scale S >= 2^26, with bit-identical (platform-independent) integer arithmetic. Tradeoff: precision ~1/S vs max magnitude ~2^63/S (S=2^26 leaves ample range for MVW values O(1e2))."
+}

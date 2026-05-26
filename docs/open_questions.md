@@ -114,10 +114,45 @@ cost of dynamic range.
 
 **Blocks:** DR-01, DR-02.
 
-**Status:** Open / deferred to implementation phase. The reference kernel uses
-IEEE-754 doubles and achieves bit-identical results *within a platform*; the
-cross-platform matrix in `hardware/target_spec.md` is the test that would resolve
-this empirically.
+**Status:** **RESOLVED (two viable paths, fixed-point quantified).** Experiment:
+`src/experiments/q3_fixed_point.py`; data: `results/q3_fixed_point_*.json`.
+
+*Finding 1 — the IEEE-754 risk is one operation, not the whole kernel.* A static
+audit of the hot path shows it uses only `+ - * /` and `math.sqrt` — all
+**correctly-rounded** per IEEE-754 and therefore bit-portable across IEEE-754
+platforms. The single portability hazard is `mass ** (1.0/3.0)` (libm `pow`, not
+correctly rounded, ~1 ulp variance possible), computed once per entity for the
+collision radius (`world.make_entity`). So the float kernel is *nearly*
+cross-platform deterministic. **Lightweight fix (recommended, not yet applied):**
+replace that `pow` with a portable cube-root or quantize the radius (e.g.
+`round(..., 9)`) to absorb sub-ulp `pow` variance — this makes the float kernel
+fully portable at no precision/range cost.
+
+*Finding 2 — fixed-point preserves P4 fidelity, quantified.* A pure-integer
+elastic-collision solver (values scaled by S, `math.isqrt`) is bit-identical on
+every platform by construction (integer ops are exact), trivially resolving
+DR-01. Conservation error scales ~1/S:
+
+| scale S | max momentum err | max KE err | meets 1e-6 (momentum) |
+|---------|------------------|------------|-----------------------|
+| 2^18 | 3.1e-5 | 8.5e-3 | no |
+| 2^22 | 2.1e-6 | 3.5e-4 | no |
+| 2^26 | 1.3e-7 | 3.7e-5 | **yes** |
+| 2^30 | 8.4e-9 | 2.6e-6 | yes |
+
+(float reference for comparison: ~3e-14 / 2e-13.) So **fixed-point meets the
+PSF-02 momentum threshold (≤1e-6) at S ≥ 2^26**; energy (quadratic in v)
+converges slower and needs ~2^31. Range/precision tradeoff: precision ~1/S vs
+max magnitude ~2^63/S for a fixed-width int64 port (2^26 leaves ~2^37 ≈ 1.4e11
+headroom, ample for MVW values O(1e2)); in CPython, ints are arbitrary-precision
+so there is no overflow at all.
+
+**Verdict.** Cross-platform determinism is achievable two ways: (a) the cheap
+float fix (portable cbrt / radius quantization), since only one op is at risk;
+or (b) full fixed-point at S ≥ 2^26 for momentum fidelity. Q3's literal question
+— "can fixed-point preserve P4 fidelity at 1e-6?" — is answered **yes**, with the
+scale requirement quantified. Empirical confirmation still wants the
+cross-architecture run matrix in `hardware/target_spec.md`.
 
 ---
 
@@ -139,5 +174,5 @@ may be required for the "arbitrary environment" generation claimed in EG-01.
 |----|----------|--------|--------|
 | Q1 | Minimum N for emergent behavior | Partial — N≈100 for 2% MB Gaussianity; density is the real constraint | WSI-01, TC-03 |
 | Q2 | BVH serial classification | Resolved — serial-compatible (single-threaded O(N log N); SaP/naive agree) | SCE-03 |
-| Q3 | Fixed-point vs. IEEE 754 fidelity | Open | DR-01, DR-02 |
+| Q3 | Fixed-point vs. IEEE 754 fidelity | Resolved — fixed-point meets 1e-6 momentum at S≥2^26; float kernel portable except one `pow` | DR-01, DR-02 |
 | Q4 | Turing completeness of T=4 vocabulary | Open | EG-01 |
