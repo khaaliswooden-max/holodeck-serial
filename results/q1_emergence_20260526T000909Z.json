@@ -1,0 +1,184 @@
+{
+  "experiment": "Q1 emergence",
+  "timestamp_utc": "2026-05-26T00:09:09.109262+00:00",
+  "constants": {
+    "V0": 5.0,
+    "DT": 0.01,
+    "MASS": 1.0,
+    "DENSITY": 0.11,
+    "EPS": 1e-06,
+    "ticks": 1500,
+    "seeds": 5
+  },
+  "fixed_density_sweep": [
+    {
+      "n": 2,
+      "bounds": 2.6295358943292952,
+      "eq_kurt_mean": -0.8227291343058816,
+      "eq_kurt_std": 0.10577316918217136,
+      "eq_kurt_theory": -0.75,
+      "eq_ks_mean": 0.32074222021264226,
+      "collisions_per_particle": 17.7,
+      "giant_fraction": 1.0,
+      "lyapunov": 3.226414365378056,
+      "log10_amp": 6.92602335879774,
+      "init_kurt": -1.2
+    },
+    {
+      "n": 4,
+      "bounds": 3.31300762471962,
+      "eq_kurt_mean": -0.4849468903699566,
+      "eq_kurt_std": 0.1680880662788285,
+      "eq_kurt_theory": -0.42857142857142855,
+      "eq_ks_mean": 0.2202063640157939,
+      "collisions_per_particle": 23.55,
+      "giant_fraction": 1.0,
+      "lyapunov": 2.5889875429593054,
+      "log10_amp": 7.018429345393195,
+      "init_kurt": -1.2
+    },
+    {
+      "n": 8,
+      "bounds": 4.174128044846463,
+      "eq_kurt_mean": -0.37863740981301575,
+      "eq_kurt_std": 0.22984668065938757,
+      "eq_kurt_theory": -0.23076923076923078,
+      "eq_ks_mean": 0.1615221565051017,
+      "collisions_per_particle": 24.65,
+      "giant_fraction": 1.0,
+      "lyapunov": 3.177224624478394,
+      "log10_amp": 7.141593463057814,
+      "init_kurt": -1.2
+    },
+    {
+      "n": 16,
+      "bounds": 5.2590717886585905,
+      "eq_kurt_mean": -0.19060706102332156,
+      "eq_kurt_std": 0.15328185874064648,
+      "eq_kurt_theory": -0.12,
+      "eq_ks_mean": 0.11433479535773786,
+      "collisions_per_particle": 24.5125,
+      "giant_fraction": 1.0,
+      "lyapunov": 5.350711104143199,
+      "log10_amp": 7.444279830453575,
+      "init_kurt": -1.2
+    },
+    {
+      "n": 32,
+      "bounds": 6.62601524943924,
+      "eq_kurt_mean": 0.04163591781635219,
+      "eq_kurt_std": 0.17881632373596257,
+      "eq_kurt_theory": -0.061224489795918366,
+      "eq_ks_mean": 0.08528182670711643,
+      "collisions_per_particle": 23.05,
+      "giant_fraction": 1.0,
+      "lyapunov": 3.7519991381234825,
+      "log10_amp": 7.576855467299942,
+      "init_kurt": -1.2
+    },
+    {
+      "n": 64,
+      "bounds": 8.348256089692926,
+      "eq_kurt_mean": 0.04593259858479628,
+      "eq_kurt_std": 0.1040186937909791,
+      "eq_kurt_theory": -0.030927835051546393,
+      "eq_ks_mean": 0.061446619191636354,
+      "collisions_per_particle": 22.9375,
+      "giant_fraction": 1.0,
+      "lyapunov": 4.812580127160253,
+      "log10_amp": 7.709725295106345,
+      "init_kurt": -1.2
+    },
+    {
+      "n": 100,
+      "bounds": 9.68729306151464,
+      "eq_kurt_mean": -0.06898993477650464,
+      "eq_kurt_std": 0.08157932683838343,
+      "eq_kurt_theory": -0.019867549668874173,
+      "eq_ks_mean": 0.047310155501136576,
+      "collisions_per_particle": 22.55,
+      "giant_fraction": 1.0,
+      "lyapunov": 5.061187839242174,
+      "log10_amp": 7.8495942743609,
+      "init_kurt": -1.2
+    },
+    {
+      "n": 128,
+      "bounds": 10.51814357731718,
+      "eq_kurt_mean": 0.03032923160664101,
+      "eq_kurt_std": 0.14225498465974504,
+      "eq_kurt_theory": -0.015544041450777202,
+      "eq_ks_mean": 0.0461358489183613,
+      "collisions_per_particle": 22.45,
+      "giant_fraction": 1.0,
+      "lyapunov": 5.077397680675451,
+      "log10_amp": 7.905941381839002,
+      "init_kurt": -1.2
+    },
+    {
+      "n": 256,
+      "bounds": 13.252030498878478,
+      "eq_kurt_mean": -0.0030087439642470597,
+      "eq_kurt_std": 0.03651256417176428,
+      "eq_kurt_theory": -0.007792207792207792,
+      "eq_ks_mean": 0.03135957609893229,
+      "collisions_per_particle": 22.14765625,
+      "giant_fraction": 1.0,
+      "lyapunov": 5.097618384331398,
+      "log10_amp": 8.048311047891728,
+      "init_kurt": -1.2
+    }
+  ],
+  "fixed_box_sweep": [
+    {
+      "n": 10,
+      "bounds": 100.0,
+      "collisions_per_particle": 0.0,
+      "giant_fraction": 0.1,
+      "eq_kurt": -1.015802798633246
+    },
+    {
+      "n": 50,
+      "bounds": 100.0,
+      "collisions_per_particle": 0.0,
+      "giant_fraction": 0.02,
+      "eq_kurt": -1.272668699872011
+    },
+    {
+      "n": 100,
+      "bounds": 100.0,
+      "collisions_per_particle": 0.0,
+      "giant_fraction": 0.01,
+      "eq_kurt": -1.2566246027106516
+    },
+    {
+      "n": 500,
+      "bounds": 100.0,
+      "collisions_per_particle": 0.04,
+      "giant_fraction": 0.01,
+      "eq_kurt": -1.1403957904709574
+    },
+    {
+      "n": 1000,
+      "bounds": 100.0,
+      "collisions_per_particle": 0.088,
+      "giant_fraction": 0.006,
+      "eq_kurt": -1.1232419553124235
+    }
+  ],
+  "thresholds": {
+    "thermal_kurt_0.10_theory": 20,
+    "thermal_kurt_0.05_theory": 40,
+    "thermal_kurt_0.02_theory": 100,
+    "thermal_kurt_0.05_measured": 32,
+    "mixing_lyapunov_positive": 2,
+    "interaction_giant_0.9_fixed_box": null
+  },
+  "analysis": {
+    "kurtosis_law": "-6/(3N+2)  (microcanonical component excess kurtosis)",
+    "measured_minus_theory_mean": -0.018480515905017154,
+    "measured_minus_theory_std": 0.07693601023339758,
+    "nominal_mvw_collisions_per_particle_L100": 0.0,
+    "interpretation": "Thermal/Gaussian emergence follows -6/(3N+2): Gaussianity within 5% needs N>=40, within 2% needs N>=100. Mixing (chaos) and interaction percolate at low N once collisions occur. At the nominal box L=100 the gas is collision-starved (cpp~0 at N=100), so DENSITY -- not N -- is the binding under-specification."
+  }
+}

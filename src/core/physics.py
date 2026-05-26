@@ -190,11 +190,14 @@ def _resolve_collision(a, b):
     return True
 
 
-def resolve_collisions(entities, mode="naive"):
+def resolve_collisions(entities, mode="naive", record=None):
     """P4: detect and resolve all elastic collisions for one tick.
 
     Returns the number of collisions resolved. Pairs are gathered, then sorted
-    by (id_a, id_b) and resolved in that fixed order for determinism."""
+    by (id_a, id_b) and resolved in that fixed order for determinism.
+
+    If `record` is a list, each resolved collision's (id_a, id_b) is appended
+    to it (opt-in; default None adds no overhead)."""
     if mode == "bvh":
         pairs = _candidate_pairs_bvh(entities)
     elif mode == "naive":
@@ -212,7 +215,9 @@ def resolve_collisions(entities, mode="naive"):
     ordered.sort(key=lambda t: (t[0], t[1]))
 
     resolved = 0
-    for _, _, a, b in ordered:
+    for ida, idb, a, b in ordered:
         if _resolve_collision(a, b):
             resolved += 1
+            if record is not None:
+                record.append((ida, idb))
     return resolved
