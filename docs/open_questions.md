@@ -75,7 +75,30 @@ question is conceptual, not implementational.
 
 **Blocks:** SCE-03.
 
-**Status:** Open.
+**Status:** **RESOLVED (serial-compatible).** Experiment:
+`src/experiments/q2_bvh_serial.py`; data: `results/q2_bvh_serial_*.json`.
+Evidence:
+
+- **Seriality.** The reference BVH build and traversal run in a single thread
+  (`threading.active_count()` stays 1 throughout) and are deterministic across
+  repeated builds. The construction is a recursive median split with a stable
+  sort — sequential, no parallel primitive.
+- **Complexity.** Build-only time scales with log-log slope **1.12** over
+  N ∈ [100, 3200] (O(N log N)-class); the full BVH broad phase **1.16**; the
+  naive scan **2.06** (O(N²)). The serial O(N log N) build is achievable with no
+  parallelism.
+- **Non-uniqueness.** An independent serial broad-phase — sweep-and-prune,
+  O(N log N) sort + sweep — and the naive O(N²) scan find the **exact same**
+  overlapping pairs as the BVH across 5 random configurations. Serial spatial
+  indexing is not unique to BVH; correctness never depends on parallelism.
+  (Sweep-and-prune's log-log slope was ~1.65 here — it degrades when many
+  x-intervals overlap at high packing — so BVH is the more robust *serial*
+  choice, not the only one.)
+
+**Verdict.** Under Interpretation 1 (parallelism permitted above the serial
+foundation but not required as a primitive), the BVH **counts as serial**. That
+BVH *can* be parallelized is irrelevant — our build does not. The SCE-03 scaling
+analysis that relies on serial O(N log N) collision detection therefore holds.
 
 ---
 
@@ -115,6 +138,6 @@ may be required for the "arbitrary environment" generation claimed in EG-01.
 | ID | Question | Status | Blocks |
 |----|----------|--------|--------|
 | Q1 | Minimum N for emergent behavior | Partial — N≈100 for 2% MB Gaussianity; density is the real constraint | WSI-01, TC-03 |
-| Q2 | BVH serial classification | Open | SCE-03 |
+| Q2 | BVH serial classification | Resolved — serial-compatible (single-threaded O(N log N); SaP/naive agree) | SCE-03 |
 | Q3 | Fixed-point vs. IEEE 754 fidelity | Open | DR-01, DR-02 |
 | Q4 | Turing completeness of T=4 vocabulary | Open | EG-01 |

@@ -1,0 +1,59 @@
+{
+  "experiment": "Q2 BVH seriality",
+  "timestamp_utc": "2026-05-26T00:12:09.121001+00:00",
+  "seriality": {
+    "single_threaded": true,
+    "deterministic_build": true,
+    "threads_before": 1,
+    "threads_after": 1
+  },
+  "broad_phase_equivalence": true,
+  "scaling": {
+    "ns": [
+      100,
+      200,
+      400,
+      800,
+      1600,
+      3200
+    ],
+    "bvh_build_s": [
+      0.0007662699999855249,
+      0.00153438899997127,
+      0.0034233819999371917,
+      0.007428548999996565,
+      0.015847278000023834,
+      0.037049305000095956
+    ],
+    "bvh_broadphase_s": [
+      0.0011351960000638428,
+      0.002640109000026314,
+      0.005638399999952526,
+      0.012418200000070101,
+      0.026671844000020428,
+      0.06678230499994697
+    ],
+    "sweep_and_prune_s": [
+      0.0003488570000627078,
+      0.0010101780000013605,
+      0.003070185000069614,
+      0.00943238399997881,
+      0.029435931000080018,
+      0.11038448299996162
+    ],
+    "naive_s": [
+      0.0011823730000060095,
+      0.005097811999917212,
+      0.020460472999957346,
+      0.08606403899989346,
+      0.365711981000004
+    ],
+    "loglog_slopes": {
+      "bvh_build": 1.1200115425740937,
+      "bvh_broadphase": 1.1583230205180084,
+      "sweep_and_prune": 1.6497833361353178,
+      "naive": 2.0623218174074185
+    }
+  },
+  "verdict": "BVH is serial-compatible under Interpretation 1: single-threaded deterministic O(N log N) construction (slope 1.12), and an independent serial broad-phase (sweep-and-prune) plus the naive scan find identical overlaps. Parallelizability is optional, not required."
+}
