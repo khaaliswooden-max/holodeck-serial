@@ -2,7 +2,7 @@
 
 > **Toward a Holodeck on Serial Compute: A Benchmark Framework and Open Research Agenda**
 >
-> Zuup Innovation Lab | A. Khaalis Wooden, Sr.
+> Zuup Innovation Lab | Aldrich K. Wooden, Sr.
 
 ---
 
@@ -126,12 +126,12 @@ pdflatex holodeck_serial_IEEE_Paper.tex
 
 ```bibtex
 @misc{wooden2026holodeck,
-  author    = {Wooden, Aldrich K.},
-  title     = {Toward a Holodeck on Serial Compute: A Benchmark Framework
-               and Open Research Agenda},
-  year      = {2026},
-  institution = {Zuup Innovation Lab / Southern New Hampshire University},
-  note      = {Position paper. Repository: github.com/khaaliswooden-max/holodeck-serial}
+  author       = {Wooden, Sr., Aldrich K.},
+  title        = {Toward a Holodeck on Serial Compute: A Benchmark Framework
+                  and Open Research Agenda},
+  year         = {2026},
+  howpublished = {Position paper, Zuup Innovation Lab / Southern New Hampshire University},
+  note         = {Repository: github.com/khaaliswooden-max/holodeck-serial}
 }
 ```
 
