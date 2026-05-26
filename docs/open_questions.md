@@ -166,7 +166,39 @@ may be required for the "arbitrary environment" generation claimed in EG-01.
 
 **Blocks:** EG-01.
 
-**Status:** Open.
+**Status:** **RESOLVED (Turing-complete; T=3 subset suffices).** Experiment:
+`src/experiments/q4_turing.py`; data: `results/q4_turing_*.json`.
+
+**Constructive reduction.** A Minsky register machine (INC, DEC, JZ over ≥2
+unbounded registers) is Turing-complete (Minsky, 1967). Its operations map
+exactly onto a subset of T against an MVW world, with register `r` represented
+as the population of entity-type `r`:
+
+| register op | MVW primitive(s) |
+|-------------|------------------|
+| value of `r` | **query** type-`r` population |
+| INC(`r`) | **create** an entity of type `r` |
+| DEC(`r`) | **query** for a type-`r` entity, then **destroy** it |
+| JZ(`r`, L) | **query** type-`r` population; branch if zero |
+
+**Empirical proof.** A register machine whose entire state lives in an MVW world
+— accessed *only* through create/destroy/query — executed real INC/DEC/JZ
+programs. All 12 test cases passed: addition (`R0 += R1`) and multiplication
+(`R2 = R0·R1`, which uses nested loops and a temp register, exercising genuine
+control flow), e.g. `12·11 = 132` with `R1` correctly preserved. A 9·9 run used
+261 creates, 171 destroys, 361 queries — pure interaction-vocabulary operations.
+
+**Verdict.** T is Turing-complete. The minimal universal subset is
+**{create, destroy, query}** — `move` adds spatial expressiveness, not
+computational power, so T=4 is *sufficient* (and not minimal for universality).
+This supports EG-01: any computable environment configuration is in principle
+constructible through the interaction vocabulary.
+
+**Honest caveat.** Turing-completeness is a property of the instruction set *plus
+a control layer that branches on observations* (the PC + JZ loop). The primitives
+supply the universal operations; a fixed straight-line event log is not
+universal, but the vocabulary under query-conditioned control is — exactly as an
+ISA needs a program counter.
 
 ---
 
@@ -175,4 +207,4 @@ may be required for the "arbitrary environment" generation claimed in EG-01.
 | Q1 | Minimum N for emergent behavior | Partial — N≈100 for 2% MB Gaussianity; density is the real constraint | WSI-01, TC-03 |
 | Q2 | BVH serial classification | Resolved — serial-compatible (single-threaded O(N log N); SaP/naive agree) | SCE-03 |
 | Q3 | Fixed-point vs. IEEE 754 fidelity | Resolved — fixed-point meets 1e-6 momentum at S≥2^26; float kernel portable except one `pow` | DR-01, DR-02 |
-| Q4 | Turing completeness of T=4 vocabulary | Open | EG-01 |
+| Q4 | Turing completeness of T=4 vocabulary | Resolved — Turing-complete; {create,destroy,query} = Minsky register machine (move not needed) | EG-01 |
