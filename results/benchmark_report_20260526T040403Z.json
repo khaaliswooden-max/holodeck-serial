@@ -1,6 +1,6 @@
 {
   "report": "holodeck-serial benchmark report",
-  "timestamp_utc": "2026-05-25T23:42:59.129179+00:00",
+  "timestamp_utc": "2026-05-26T04:04:03.755189+00:00",
   "summary": {
     "total": 30,
     "passed": 26,
@@ -11,52 +11,52 @@
     {
       "id": "SCE-01",
       "name": "CPU cost per tick (MVW)",
-      "result": 3295788.7879999815,
+      "result": 3349210.222000295,
       "threshold": "profiler measurement",
       "passed": null,
       "notes": "mean ns/tick over 500 ticks (full run uses 10000)",
       "confidence": "SPECULATIVE",
-      "duration_ms": 1658.1033280000383
+      "duration_ms": 1819.8253660000034
     },
     {
       "id": "SCE-02",
       "name": "RAM per 1K entities",
-      "result": 392904.0,
+      "result": 392976.0,
       "threshold": "profiler measurement",
       "passed": null,
       "notes": "tracemalloc bytes for 1000-entity world construction",
       "confidence": "SPECULATIVE",
-      "duration_ms": 48.67737899996882
+      "duration_ms": 99.89075500001832
     },
     {
       "id": "SCE-03",
       "name": "Tick cost scaling law",
-      "result": "naive 100->500 slowdown 31.6x",
+      "result": "naive 100->500 slowdown 47.5x",
       "threshold": "O(N log N) or better (bvh)",
       "passed": null,
-      "notes": "full O() fit in sce_profile JSON; bvh N=1000=54 tps",
+      "notes": "full O() fit in sce_profile JSON; bvh N=1000=55 tps",
       "confidence": "PLAUSIBLE",
-      "duration_ms": 1224.0257000000838
+      "duration_ms": 1350.090234000021
     },
     {
       "id": "SCE-04",
       "name": "Serial sufficiency",
-      "result": 297.78558971009375,
+      "result": 286.50940240551483,
       "threshold": ">= 60 ticks/sec",
       "passed": true,
       "notes": "3s window in runner; authoritative 60s run in sce_profile JSON (5x headroom)",
       "confidence": "SPECULATIVE",
-      "duration_ms": 3002.3878859999513
+      "duration_ms": 3005.6598019999965
     },
     {
       "id": "DR-01",
       "name": "Cross-platform reproducibility",
-      "result": "481dd78022cba85b",
+      "result": "6de1103cf7416d81",
       "threshold": "Hash-equal (same impl.)",
       "passed": true,
       "notes": "same-platform identity verified; true cross-arch (x86/ARM/RISC-V) matrix is in hardware/target_spec.md (Q3)",
       "confidence": "PLAUSIBLE",
-      "duration_ms": 2006.9489150000663
+      "duration_ms": 2143.4390409999933
     },
     {
       "id": "DR-02",
@@ -66,7 +66,7 @@
       "passed": true,
       "notes": "divergence between two same-seed runs over 300 ticks",
       "confidence": "PLAUSIBLE",
-      "duration_ms": 2040.1347789999136
+      "duration_ms": 2088.631851999992
     },
     {
       "id": "DR-03",
@@ -76,7 +76,7 @@
       "passed": true,
       "notes": "replayed create/move/destroy schedule reproduces final hash",
       "confidence": "VERIFIED",
-      "duration_ms": 673.4204069998668
+      "duration_ms": 668.3787139999993
     },
     {
       "id": "TC-01",
@@ -86,7 +86,7 @@
       "passed": true,
       "notes": "25 runs x 40 ticks (spec: 100 runs)",
       "confidence": "VERIFIED",
-      "duration_ms": 3367.146982999884
+      "duration_ms": 3421.3781469999844
     },
     {
       "id": "TC-02",
@@ -96,17 +96,17 @@
       "passed": true,
       "notes": "query-after-move reflects the move within the tick (4000 events)",
       "confidence": "VERIFIED",
-      "duration_ms": 6741.603784000063
+      "duration_ms": 6684.394852000025
     },
     {
       "id": "TC-03",
       "name": "Simulation rate",
-      "result": 297.9446949098065,
+      "result": 289.23471865859665,
       "threshold": ">= 60 ticks/sec (MVW)",
       "passed": true,
       "notes": "1s sampling window",
       "confidence": "SPECULATIVE",
-      "duration_ms": 1000.3973509999469
+      "duration_ms": 1006.5888990000076
     },
     {
       "id": "TC-04",
@@ -116,7 +116,7 @@
       "passed": true,
       "notes": "state remains finite across timestep scaling",
       "confidence": "PLAUSIBLE",
-      "duration_ms": 2022.0601989999523
+      "duration_ms": 2077.303795000006
     },
     {
       "id": "WSI-01",
@@ -126,7 +126,7 @@
       "passed": true,
       "notes": "1000 ticks (spec: 10K); no creates/destroys scheduled",
       "confidence": "PLAUSIBLE",
-      "duration_ms": 3339.006663999953
+      "duration_ms": 3440.332138999992
     },
     {
       "id": "WSI-02",
@@ -136,17 +136,17 @@
       "passed": true,
       "notes": "100000 queries on a frozen state (spec: 1M)",
       "confidence": "VERIFIED",
-      "duration_ms": 109.04256100002385
+      "duration_ms": 111.58833999999729
     },
     {
       "id": "WSI-03",
       "name": "State query latency",
-      "result": 0.0009485866999966675,
+      "result": 0.001008616499998993,
       "threshold": "<= 1 ms / 10K entities",
       "passed": true,
       "notes": "mean single-entity query latency, 10K-entity world",
       "confidence": "SPECULATIVE",
-      "duration_ms": 28.63681999997425
+      "duration_ms": 59.71230500000502
     },
     {
       "id": "WSI-04",
@@ -156,7 +156,7 @@
       "passed": true,
       "notes": "serialize -> clone -> hash stable over 1K iterations",
       "confidence": "VERIFIED",
-      "duration_ms": 226.7876729999898
+      "duration_ms": 246.50349600000254
     },
     {
       "id": "PSF-01",
@@ -166,7 +166,7 @@
       "passed": true,
       "notes": "peak deviation vs analytic free-fall, % of trajectory extent, over 2000 samples",
       "confidence": "VERIFIED",
-      "duration_ms": 3.4908390000509826
+      "duration_ms": 3.6614670000005844
     },
     {
       "id": "PSF-02",
@@ -176,7 +176,7 @@
       "passed": true,
       "notes": "|dp|=1.78e-15 |dKE|=3.55e-15 collided=True",
       "confidence": "VERIFIED",
-      "duration_ms": 0.2312990000064019
+      "duration_ms": 0.2366800000004332
     },
     {
       "id": "PSF-03",
@@ -186,7 +186,7 @@
       "passed": true,
       "notes": "containment over 500 frames (spec: 10K)",
       "confidence": "PLAUSIBLE",
-      "duration_ms": 1715.6388890000471
+      "duration_ms": 1742.150664999997
     },
     {
       "id": "PSF-04",
@@ -196,17 +196,17 @@
       "passed": true,
       "notes": "9/9 type-pairs have a defined handler",
       "confidence": "PLAUSIBLE",
-      "duration_ms": 0.025435999987166724
+      "duration_ms": 0.07531700001095487
     },
     {
       "id": "IF-01",
       "name": "Input-to-state latency",
-      "result": 3.3614069919999565,
+      "result": 3.363618967999969,
       "threshold": "<= 16.6 ms (60 Hz)",
       "passed": true,
       "notes": "mean event+tick latency over 500 iters",
       "confidence": "PLAUSIBLE",
-      "duration_ms": 1680.9366649999902
+      "duration_ms": 1682.31179
     },
     {
       "id": "IF-02",
@@ -216,7 +216,7 @@
       "passed": true,
       "notes": "50 runs of a fixed input schedule",
       "confidence": "VERIFIED",
-      "duration_ms": 10170.929012999977
+      "duration_ms": 10313.106763999996
     },
     {
       "id": "IF-03",
@@ -226,7 +226,7 @@
       "passed": true,
       "notes": "create, query, move, destroy all exercised",
       "confidence": "PLAUSIBLE",
-      "duration_ms": 3.372983999952339
+      "duration_ms": 3.6226740000131485
     },
     {
       "id": "IF-04",
@@ -236,7 +236,7 @@
       "passed": true,
       "notes": "create/destroy count deltas and query read-purity",
       "confidence": "PLAUSIBLE",
-      "duration_ms": 6.4467119998425915
+      "duration_ms": 6.653863999986243
     },
     {
       "id": "EG-01",
@@ -246,7 +246,7 @@
       "passed": true,
       "notes": "100 specs instantiated to requested entity count",
       "confidence": "PLAUSIBLE",
-      "duration_ms": 12.864817000036055
+      "duration_ms": 32.07807699999421
     },
     {
       "id": "EG-02",
@@ -256,17 +256,17 @@
       "passed": true,
       "notes": "initial-state hash equality for identical generation inputs",
       "confidence": "VERIFIED",
-      "duration_ms": 0.5169630001091718
+      "duration_ms": 1.0378839999987122
     },
     {
       "id": "EG-03",
       "name": "Generation speed",
-      "result": 0.00017082652000226516,
+      "result": 0.00042526485999985655,
       "threshold": "<= 5 s (MVW)",
       "passed": true,
       "notes": "mean MVW(100) construction time over 50 builds",
       "confidence": "SPECULATIVE",
-      "duration_ms": 8.547994000082326
+      "duration_ms": 21.271042999984502
     },
     {
       "id": "EG-04",
@@ -276,7 +276,7 @@
       "passed": true,
       "notes": "generation verified for N in (1, 10, 100, 1000); richer spec DSL is TODO",
       "confidence": "PLAUSIBLE",
-      "duration_ms": 1.9752159998915886
+      "duration_ms": 4.790953999986414
     },
     {
       "id": "OI-01",
@@ -286,7 +286,7 @@
       "passed": true,
       "notes": "all 100 entities fully queryable",
       "confidence": "PLAUSIBLE",
-      "duration_ms": 0.329961999796069
+      "duration_ms": 0.6171240000014677
     },
     {
       "id": "OI-02",
@@ -296,7 +296,7 @@
       "passed": true,
       "notes": "1000 repeated query digests on a frozen state",
       "confidence": "VERIFIED",
-      "duration_ms": 177.09301500008223
+      "duration_ms": 178.19017799999415
     },
     {
       "id": "OI-03",
@@ -306,7 +306,7 @@
       "passed": null,
       "notes": "TODO: 3/10 formats (json,dict,csv) implemented; implemented formats round-trip lossless=True",
       "confidence": "SPECULATIVE",
-      "duration_ms": 32.09874699996362
+      "duration_ms": 35.534658000017316
     }
   ],
   "platform": "Linux-6.18.5-x86_64-with-glibc2.39",

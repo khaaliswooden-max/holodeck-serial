@@ -17,20 +17,41 @@ cached for collision detection.
 """
 
 import hashlib
+import math
 import struct
 
 # --- Entity field indices (Entity is a flat list) ---
 ID, X, Y, Z, VX, VY, VZ, MASS, TYPE, RADIUS = range(10)
 ENTITY_WIDTH = 10
 
-# Derived-radius scale: r = BASE_RADIUS * mass ** (1/3).
+# Derived-radius scale: r = BASE_RADIUS * cbrt(mass).
 # VERIFIED -- volume-proportional radius for uniform-density spheres (r ~ m^(1/3)).
 BASE_RADIUS = 0.5
 
 
+def _portable_cbrt(x):
+    """Cross-platform-deterministic cube root (Q3 fix).
+
+    `mass ** (1/3)` routes through libm `pow`, which is NOT correctly rounded
+    and may differ by ~1 ulp across architectures/libms -- the sole portability
+    hazard in the kernel (see docs/open_questions.md Q3). This computes the cube
+    root using only frexp/ldexp (exact exponent ops) and Newton iterations over
+    +,-,*,/ (all correctly-rounded per IEEE-754), so the result is bit-identical
+    on every IEEE-754 platform."""
+    if x == 0.0:
+        return 0.0
+    sign = -1.0 if x < 0.0 else 1.0
+    x = abs(x)
+    _, e = math.frexp(x)            # x = mantissa * 2**e, exact
+    y = math.ldexp(1.0, e // 3)     # power-of-two seed, exact
+    for _ in range(30):             # quadratic convergence; 30 is ample
+        y = (2.0 * y + x / (y * y)) / 3.0
+    return sign * y
+
+
 def make_entity(eid, x, y, z, vx, vy, vz, mass, etype):
     """Construct an entity list with a derived collision radius."""
-    radius = BASE_RADIUS * (mass ** (1.0 / 3.0))
+    radius = BASE_RADIUS * _portable_cbrt(mass)
     return [eid, x, y, z, vx, vy, vz, mass, etype, radius]
 
 

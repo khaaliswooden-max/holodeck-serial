@@ -36,10 +36,13 @@ Where:
 
 ## Grounding Derivation
 
-### Why N = 100? (SPECULATIVE — open research question)
+### Why N = 100? (PLAUSIBLE — empirically supported; see Q1 finding below)
 100 entities is sufficient to produce emergent collision behavior without trivializing
-the physics solver. It is NOT derived from any published complexity model. This is an
-open research question documented in the whitepaper as Gap #1.
+the physics solver. The Q1 emergence experiment (`src/experiments/q1_emergence.py`)
+now provides empirical support: the emergent velocity distribution becomes Gaussian
+(Maxwell–Boltzmann) to within ~2% at **N ≈ 100** (finite-size excess kurtosis follows
+`−6/(3N+2)`). N = 100 is therefore a reasonable, mildly conservative statistical
+minimum — not arbitrary. See the density caveat below.
 
 A first-principles derivation would require:
 - A complexity model for entity interaction density
@@ -78,6 +81,46 @@ insufficient for arbitrary environment instantiation. K = 3 is the minimum.
 
 T < 4 removes either the ability to modify or observe the world — both are required
 by the Tier C definition.
+
+---
+
+## Density: The Missing Parameter (Q1 Finding — proposed for v0.2)
+
+The Q1 emergence experiment surfaced a gap the original 6-tuple does not close:
+**the MVW fixes the entity count N but not the spatial density** (equivalently,
+the box size L or packing fraction φ). N alone does not determine whether
+entities actually interact.
+
+Empirical evidence (`results/q1_emergence_*.json`):
+
+- At a collision-rich density (mean free path ≈ box size), N = 100 reaches the
+  emergent Maxwell–Boltzmann regime, and chaotic mixing appears for all N ≥ 2.
+- **But at the implementation's nominal box L = 100, MVW(100) is ~100× too
+  dilute to collide**: collisions per particle ≈ 0 at N = 100 (and only ~0.09
+  at N = 1000) over hundreds of ticks. The interaction graph never percolates.
+  Inter-particle collisions only become significant at L = 100 for N ≈ 10⁴.
+
+So the *binding* under-specification for emergent dynamics is **density, not N**.
+
+**Proposed v0.2 refinement.** Promote the MVW to a 7-tuple by adding a density
+parameter, specified dimensionlessly so it is resolution-independent:
+
+```
+MVW = (N, M, P, K, T, Φ, ρ)
+```
+
+where ρ is a **packing fraction** target (recommended φ ≈ 0.05–0.10, i.e.
+mean free path ≲ box size). Equivalently, fix the box side L for unit-radius
+particles. For N = 100 with the reference radius scale, φ ≈ 0.06 corresponds to
+**L ≈ 10** (not 100) — that is the configuration in which MVW(100) exhibits the
+emergent thermal behavior its claim assumes.
+
+| Symbol | Name | Recommended | Confidence |
+|--------|------|-------------|------------|
+| ρ (φ)  | Packing fraction | 0.05–0.10 | PLAUSIBLE — from Q1 sweep, not yet finely calibrated |
+
+Until v0.2 formalizes ρ, treat the nominal box as a free parameter and set it so
+the mean free path does not exceed the domain.
 
 ---
 
