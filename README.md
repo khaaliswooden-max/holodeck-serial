@@ -50,7 +50,7 @@ holodeck-serial/
 │   ├── serial_baseline.md            ← 1 GHz serial CPU baseline definition
 │   └── profiling_plan.md             ← Empirical validation plan
 │
-├── results/                          ← Benchmark results (populated in Phase 4)
+├── results/                          ← Benchmark + profiler JSON output
 │   └── .gitkeep
 │
 └── docs/
@@ -67,8 +67,8 @@ holodeck-serial/
 | 1 | ✅ Complete | Benchmark set v0.1 (8 domains, 27 benchmarks) |
 | 2 | ✅ Complete | Integrity/verticality attack — 5 attacks, 3 resolved |
 | 3 | ✅ Complete | IEEE 5-page whitepaper scaffold (LaTeX + BibTeX) |
-| 4 | 🔲 Next | Hardware scaffold + reference implementation |
-| 5 | 🔲 Pending | Claude Code execution plan |
+| 4 | ✅ Complete | Hardware scaffold + reference implementation |
+| 5 | ✅ Complete | Claude Code execution plan |
 
 ---
 
@@ -81,6 +81,15 @@ world that satisfies the Tier C definition:
 MVW = (N=100, M=8, P=4, K=3, T=4, Φ=1)
 ```
 
+**Analytical result (SCE-04 grounding):**
+At 1 GHz serial CPU, MVW(100,8,4,3,4,1) achieves ~162,000 ticks/sec against a
+60 ticks/sec requirement — a 2,700× margin (analytical).
+
+**Empirical validation (Phase 4):** `src/mvw/mvw_profiler.py` now measures SCE-04
+directly. On the reference run the MVW sustains well above the 60 ticks/sec
+requirement with positive headroom (PASS); exact ticks/sec is machine-dependent
+and recorded per-run in `results/sce_profile_*.json`. This upgrades SCE-04 from
+SPECULATIVE toward PLAUSIBLE on real hardware.
 **SCE-04 — analytical claim and empirical measurement:**
 - *Analytical* (1 GHz, 1 op/cycle): MVW(100,8,4,3,4,1) achieves ~162,000
   ticks/sec against a 60 ticks/sec requirement — a ~2,700× margin (SPECULATIVE).
@@ -108,7 +117,14 @@ MVW = (N=100, M=8, P=4, K=3, T=4, Φ=1)
 ```bash
 git clone https://github.com/khaaliswooden-max/holodeck-serial
 cd holodeck-serial
-pip install -r requirements.txt  # Phase 4
+pip install -r requirements.txt
+```
+
+**Run the reference engine, profiler, and benchmarks:**
+```bash
+python src/mvw/mvw_instance.py        # MVW reference instance
+python src/mvw/mvw_profiler.py        # SCE-01..04 profiling -> results/
+python src/benchmarks/run_benchmarks.py  # full 8-domain report -> results/
 ```
 
 **Paper compilation (requires LaTeX + IEEEtran):**
